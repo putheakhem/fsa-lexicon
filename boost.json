@@ -12,6 +12,7 @@
     ],
     "sail": false,
     "skills": [
+        "passport-development",
         "wayfinder-development",
         "pest-testing",
         "inertia-react-development",
