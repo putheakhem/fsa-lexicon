@@ -17,8 +17,10 @@
         "laravel/wayfinder": "^0.1.14"
     },
     "require-dev": {
+        "driftingly/rector-laravel": "^2.1.12",
         "fakerphp/faker": "^1.24",
         "laravel/boost": "^2.0",
+        "larastan/larastan": "^3.9.3",
         "laravel/pail": "^1.2.5",
         "laravel/pint": "^1.27",
         "laravel/sail": "^1.53",
@@ -58,6 +60,7 @@
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"php artisan inertia:start-ssr\" --names=server,queue,logs,ssr --kill-others"
         ],
         "lint": [
+            "rector",
             "pint --parallel"
         ],
         "lint:check": [
@@ -69,6 +72,9 @@
             "npm run format:check",
             "npm run types:check",
             "@test"
+        ],
+        "test:types": [
+            "phpstan"
         ],
         "test": [
             "@php artisan config:clear --ansi",
