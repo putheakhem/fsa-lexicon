@@ -188,9 +188,7 @@ export default function TermForm({
         was_sent_to_telegram: initialData?.was_sent_to_telegram ?? false,
         sector_ids: initialData?.sector_ids ?? [],
         term_group_ids: initialData?.term_group_ids ?? [],
-        definitions: initialData?.definitions?.length
-            ? initialData.definitions
-            : [emptyDefinition()],
+        definitions: initialData?.definitions ?? [],
     };
 
     const { data, setData, post, put, processing, errors } = useForm<TermFormData>(defaultData);
@@ -359,11 +357,21 @@ export default function TermForm({
                             </div>
                             <Button type="button" variant="ghost" size="sm" onClick={addDefinition} className="gap-1.5 text-primary hover:text-primary">
                                 <Plus className="size-4" />
-                                Add Another
+                                Add Definition
                             </Button>
                         </div>
 
                         <div className="flex flex-col divide-y">
+                            {data.definitions.length === 0 && (
+                                <div className="flex flex-col items-center gap-3 px-6 py-10 text-center">
+                                    <BookOpen className="size-8 text-muted-foreground/40" />
+                                    <p className="text-sm text-muted-foreground">No definitions yet.</p>
+                                    <Button type="button" variant="outline" size="sm" onClick={addDefinition} className="gap-1.5">
+                                        <Plus className="size-4" />
+                                        Add Definition
+                                    </Button>
+                                </div>
+                            )}
                             {data.definitions.map((def, index) => (
                                 <div key={index} className="px-6 py-5">
                                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -388,16 +396,14 @@ export default function TermForm({
                                         <div className="flex flex-col gap-1.5">
                                             <div className="flex items-center justify-between">
                                                 <Label>Reference</Label>
-                                                {data.definitions.length > 1 && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeDefinition(index)}
-                                                        className="text-muted-foreground hover:text-destructive transition-colors"
-                                                        aria-label="Remove definition"
-                                                    >
-                                                        <Trash2 className="size-4" />
-                                                    </button>
-                                                )}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeDefinition(index)}
+                                                    className="text-muted-foreground hover:text-destructive transition-colors"
+                                                    aria-label="Remove definition"
+                                                >
+                                                    <Trash2 className="size-4" />
+                                                </button>
                                             </div>
                                             <ReferenceCombobox
                                                 id={`def_ref_${index}`}
