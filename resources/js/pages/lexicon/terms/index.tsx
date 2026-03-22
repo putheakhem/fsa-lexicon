@@ -1,6 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { CheckCircle2, Clock, MoreHorizontal, Plus, Search, SlidersHorizontal, XCircle } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { CheckCircle2, ChevronDown, Clock, Filter, MoreHorizontal, Plus, Search, X } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -47,14 +47,25 @@ interface PaginatedTerms {
     links: PaginationLink[];
 }
 
+interface SimpleOption {
+    id: number;
+    title_en: string;
+}
+
 interface Filters {
     search: string | null;
     status: string | null;
+    telegram: string | null;
+    sector_id: string | null;
+    term_group_id: string | null;
+    sort: string | null;
 }
 
 interface Props {
     terms: PaginatedTerms;
     filters: Filters;
+    sectors: SimpleOption[];
+    termGroups: SimpleOption[];
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -62,19 +73,25 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Terms', href: termsIndex() },
 ];
 
+const SORT_OPTIONS = [
+    { value: 'newest', label: 'Newest first' },
+    { value: 'oldest', label: 'Oldest first' },
+    { value: 'az', label: 'A → Z' },
+];
+
 function StatusBadge({ isApproved }: { isApproved: boolean }) {
     if (isApproved) {
         return (
-            <span className="inline-flex items-center gap-1 text-sm font-medium text-emerald-600">
+            <span className="inline-flex items-center gap-1 text-sm font-medium text-emerald-600 dark:text-emerald-400">
                 <CheckCircle2 className="size-4" />
                 Approved
             </span>
         );
     }
     return (
-        <span className="inline-flex items-center gap-1 text-sm font-medium text-amber-500">
+        <span className="inline-flex items-center gap-1 text-sm font-medium text-amber-500 dark:text-amber-400">
             <Clock className="size-4" />
-            Review
+            Draft
         </span>
     );
 }
@@ -98,33 +115,61 @@ function formatDate(dateString: string): string {
     return new Date(dateString).toISOString().slice(0, 10);
 }
 
-export default function TermsIndex({ terms, filters }: Props) {
+export default function TermsIndex({ terms, filters, sectors, termGroups }: Props) {
     const [search, setSearch] = useState(filters.search ?? '');
+    const [showAdvanced, setShowAdvanced] = useState(
+        !!(filters.status || filters.telegram || filters.sector_id || filters.term_group_id),
+    );
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const applyFilters = useCallback(
-        (overrides: Partial<Filters & { search: string }>) => {
+        (overrides: Partial<Record<string, string | undefined>>) => {
             router.get(
                 termsIndex(),
                 {
                     search: search || undefined,
                     status: filters.status || undefined,
+                    telegram: filters.telegram || undefined,
+                    sector_id: filters.sector_id || undefined,
+                    term_group_id: filters.term_group_id || undefined,
+                    sort: filters.sort && filters.sort !== 'newest' ? filters.sort : undefined,
                     ...overrides,
                 },
                 { preserveState: true, replace: true },
             );
         },
-        [search, filters.status],
+        [search, filters],
     );
 
-    const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            applyFilters({ search });
+    // Debounced search
+    useEffect(() => {
+        if (debounceRef.current) {
+            clearTimeout(debounceRef.current);
         }
+        debounceRef.current = setTimeout(() => {
+            applyFilters({ search: search || undefined });
+        }, 400);
+        return () => {
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [search]);
+
+    const clearFilter = (key: string) => applyFilters({ [key]: undefined });
+
+    const clearAll = () => {
+        setSearch('');
+        router.get(termsIndex(), {}, { preserveState: false, replace: true });
     };
 
-    const handleStatusChange = (value: string) => {
-        applyFilters({ status: value === 'all' ? undefined : value });
-    };
+    // Count active (non-search) filters
+    const activeCount = [filters.status, filters.telegram, filters.sector_id, filters.term_group_id].filter(Boolean)
+        .length;
+
+    const sectorLabel = sectors.find((s) => String(s.id) === filters.sector_id)?.title_en;
+    const groupLabel = termGroups.find((g) => String(g.id) === filters.term_group_id)?.title_en;
+
+    const hasAnyFilter = !!(search || filters.status || filters.telegram || filters.sector_id || filters.term_group_id);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -136,7 +181,7 @@ export default function TermsIndex({ terms, filters }: Props) {
                     <div>
                         <h1 className="text-2xl font-semibold tracking-tight">Terms Management</h1>
                         <p className="mt-1 text-sm text-muted-foreground">
-                            Manage and translate lexicon terms across multiple languages.
+                            {terms.total.toLocaleString()} terms across Khmer, English &amp; French.
                         </p>
                     </div>
                     <Button className="gap-2" asChild>
@@ -149,46 +194,201 @@ export default function TermsIndex({ terms, filters }: Props) {
 
                 {/* Card */}
                 <div className="rounded-xl border bg-card shadow-sm">
-                    {/* Toolbar */}
+                    {/* Primary toolbar */}
                     <div className="flex items-center gap-3 border-b px-4 py-3">
                         <div className="relative flex-1">
                             <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
-                                className="pl-9"
-                                placeholder="Search terms..."
+                                className="pl-9 pr-8"
+                                placeholder="Search Khmer, English, French..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                onKeyDown={handleSearchKeyDown}
                             />
+                            {search && (
+                                <button
+                                    type="button"
+                                    onClick={() => setSearch('')}
+                                    className="absolute top-1/2 right-2.5 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                >
+                                    <X className="size-3.5" />
+                                </button>
+                            )}
                         </div>
-                        <Button
-                            variant="outline"
-                            className="gap-2"
-                            onClick={() => applyFilters({ search })}
-                        >
-                            <SlidersHorizontal className="size-4" />
-                            Filter
-                        </Button>
+
+                        {/* Sort */}
                         <Select
-                            value={filters.status ?? 'all'}
-                            onValueChange={handleStatusChange}
+                            value={filters.sort ?? 'newest'}
+                            onValueChange={(v) => applyFilters({ sort: v === 'newest' ? undefined : v })}
                         >
                             <SelectTrigger className="w-40">
-                                <SelectValue placeholder="All Statuses" />
+                                <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">All Statuses</SelectItem>
-                                <SelectItem value="approved">Approved</SelectItem>
-                                <SelectItem value="review">Review</SelectItem>
+                                {SORT_OPTIONS.map((o) => (
+                                    <SelectItem key={o.value} value={o.value}>
+                                        {o.label}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
+
+                        {/* Advanced filters toggle */}
+                        <Button
+                            variant={activeCount > 0 ? 'default' : 'outline'}
+                            className="gap-2"
+                            onClick={() => setShowAdvanced((v) => !v)}
+                        >
+                            <Filter className="size-4" />
+                            Filters
+                            {activeCount > 0 && (
+                                <Badge className="ml-0.5 size-5 rounded-full p-0 text-xs flex items-center justify-center bg-white/20">
+                                    {activeCount}
+                                </Badge>
+                            )}
+                            <ChevronDown className={cn('size-4 transition-transform', showAdvanced && 'rotate-180')} />
+                        </Button>
                     </div>
+
+                    {/* Advanced filter row */}
+                    {showAdvanced && (
+                        <div className="flex flex-wrap items-center gap-3 border-b bg-muted/30 px-4 py-3">
+                            {/* Status */}
+                            <Select
+                                value={filters.status ?? 'all'}
+                                onValueChange={(v) => applyFilters({ status: v === 'all' ? undefined : v })}
+                            >
+                                <SelectTrigger className="h-8 w-36 text-xs">
+                                    <SelectValue placeholder="Status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Statuses</SelectItem>
+                                    <SelectItem value="approved">Approved</SelectItem>
+                                    <SelectItem value="draft">Draft</SelectItem>
+                                </SelectContent>
+                            </Select>
+
+                            {/* Telegram */}
+                            <Select
+                                value={filters.telegram ?? 'all'}
+                                onValueChange={(v) => applyFilters({ telegram: v === 'all' ? undefined : v })}
+                            >
+                                <SelectTrigger className="h-8 w-40 text-xs">
+                                    <SelectValue placeholder="Telegram" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Telegram</SelectItem>
+                                    <SelectItem value="sent">Sent</SelectItem>
+                                    <SelectItem value="pending">Pending</SelectItem>
+                                </SelectContent>
+                            </Select>
+
+                            {/* Sector */}
+                            <Select
+                                value={filters.sector_id ?? 'all'}
+                                onValueChange={(v) => applyFilters({ sector_id: v === 'all' ? undefined : v })}
+                            >
+                                <SelectTrigger className="h-8 w-44 text-xs">
+                                    <SelectValue placeholder="All Sectors" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Sectors</SelectItem>
+                                    {sectors.map((s) => (
+                                        <SelectItem key={s.id} value={String(s.id)}>
+                                            {s.title_en}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            {/* Term Group */}
+                            <Select
+                                value={filters.term_group_id ?? 'all'}
+                                onValueChange={(v) => applyFilters({ term_group_id: v === 'all' ? undefined : v })}
+                            >
+                                <SelectTrigger className="h-8 w-44 text-xs">
+                                    <SelectValue placeholder="All Groups" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Groups</SelectItem>
+                                    {termGroups.map((g) => (
+                                        <SelectItem key={g.id} value={String(g.id)}>
+                                            {g.title_en}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            {activeCount > 0 && (
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        applyFilters({
+                                            status: undefined,
+                                            telegram: undefined,
+                                            sector_id: undefined,
+                                            term_group_id: undefined,
+                                        })
+                                    }
+                                    className="text-xs text-muted-foreground hover:text-destructive flex items-center gap-1"
+                                >
+                                    <X className="size-3" /> Clear filters
+                                </button>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Active filter chips */}
+                    {hasAnyFilter && (
+                        <div className="flex flex-wrap items-center gap-2 border-b px-4 py-2">
+                            <span className="text-xs text-muted-foreground">Active:</span>
+                            {search && (
+                                <Badge variant="secondary" className="gap-1 text-xs">
+                                    Search: "{search}"
+                                    <button type="button" onClick={() => setSearch('')}><X className="size-3" /></button>
+                                </Badge>
+                            )}
+                            {filters.status && (
+                                <Badge variant="secondary" className="gap-1 text-xs capitalize">
+                                    Status: {filters.status}
+                                    <button type="button" onClick={() => clearFilter('status')}><X className="size-3" /></button>
+                                </Badge>
+                            )}
+                            {filters.telegram && (
+                                <Badge variant="secondary" className="gap-1 text-xs capitalize">
+                                    Telegram: {filters.telegram}
+                                    <button type="button" onClick={() => clearFilter('telegram')}><X className="size-3" /></button>
+                                </Badge>
+                            )}
+                            {filters.sector_id && sectorLabel && (
+                                <Badge variant="secondary" className="gap-1 text-xs">
+                                    Sector: {sectorLabel}
+                                    <button type="button" onClick={() => clearFilter('sector_id')}><X className="size-3" /></button>
+                                </Badge>
+                            )}
+                            {filters.term_group_id && groupLabel && (
+                                <Badge variant="secondary" className="gap-1 text-xs">
+                                    Group: {groupLabel}
+                                    <button type="button" onClick={() => clearFilter('term_group_id')}><X className="size-3" /></button>
+                                </Badge>
+                            )}
+                            <button
+                                type="button"
+                                onClick={clearAll}
+                                className="ml-auto text-xs text-muted-foreground hover:text-destructive"
+                            >
+                                Clear all
+                            </button>
+                        </div>
+                    )}
 
                     {/* Table */}
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b bg-muted/40">
+                                    <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                                        #
+                                    </th>
                                     <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                         Term (Khmer)
                                     </th>
@@ -205,7 +405,7 @@ export default function TermsIndex({ terms, filters }: Props) {
                                         Telegram
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                                        Created Date
+                                        Created
                                     </th>
                                     <th className="w-12 px-4 py-3" />
                                 </tr>
@@ -213,13 +413,25 @@ export default function TermsIndex({ terms, filters }: Props) {
                             <tbody className="divide-y">
                                 {terms.data.length === 0 ? (
                                     <tr>
-                                        <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
-                                            No terms found.
+                                        <td colSpan={8} className="px-4 py-16 text-center">
+                                            <p className="text-sm text-muted-foreground">No terms match your filters.</p>
+                                            {hasAnyFilter && (
+                                                <button
+                                                    type="button"
+                                                    onClick={clearAll}
+                                                    className="mt-2 text-sm text-primary hover:underline"
+                                                >
+                                                    Clear all filters
+                                                </button>
+                                            )}
                                         </td>
                                     </tr>
                                 ) : (
-                                    terms.data.map((term) => (
+                                    terms.data.map((term, i) => (
                                         <tr key={term.id} className="hover:bg-muted/30 transition-colors">
+                                            <td className="px-4 py-3 text-xs text-muted-foreground tabular-nums">
+                                                {(terms.from ?? 0) + i}
+                                            </td>
                                             <td className="px-4 py-3 font-medium">{term.term_kh}</td>
                                             <td className="px-4 py-3 text-muted-foreground">
                                                 {term.term_en ?? <span className="italic opacity-40">—</span>}
@@ -264,7 +476,9 @@ export default function TermsIndex({ terms, filters }: Props) {
                     {/* Pagination footer */}
                     <div className="flex items-center justify-between border-t px-4 py-3 text-sm text-muted-foreground">
                         <span>
-                            Showing {terms.from ?? 0} to {terms.to ?? 0} of {terms.total.toLocaleString()} results
+                            {terms.total === 0
+                                ? 'No results'
+                                : `Showing ${terms.from ?? 0}–${terms.to ?? 0} of ${terms.total.toLocaleString()}`}
                         </span>
                         <div className="flex items-center gap-1">
                             {terms.links.map((link, i) => {

@@ -23,6 +23,10 @@ final class TermController extends Controller
     {
         $status = $request->query('status');
         $search = $request->query('search');
+        $telegram = $request->query('telegram');
+        $sectorId = $request->query('sector_id');
+        $termGroupId = $request->query('term_group_id');
+        $sort = $request->query('sort', 'newest');
 
         $terms = Term::query()
             ->when($search, function ($query, string $search): void {
@@ -33,8 +37,14 @@ final class TermController extends Controller
                 });
             })
             ->when($status === 'approved', fn ($q) => $q->where('is_approved', true))
-            ->when($status === 'review', fn ($q) => $q->where('is_approved', false))
-            ->orderByDesc('created_at')
+            ->when($status === 'draft', fn ($q) => $q->where('is_approved', false))
+            ->when($telegram === 'sent', fn ($q) => $q->where('was_sent_to_telegram', true))
+            ->when($telegram === 'pending', fn ($q) => $q->where('was_sent_to_telegram', false))
+            ->when($sectorId, fn ($q) => $q->whereHas('sectors', fn ($sq) => $sq->where('sectors.id', (int) $sectorId)))
+            ->when($termGroupId, fn ($q) => $q->whereHas('termGroups', fn ($tq) => $tq->where('term_groups.id', (int) $termGroupId)))
+            ->when($sort === 'oldest', fn ($q) => $q->orderBy('created_at'))
+            ->when($sort === 'az', fn ($q) => $q->orderBy('term_en')->orderBy('term_kh'))
+            ->when($sort !== 'oldest' && $sort !== 'az', fn ($q) => $q->orderByDesc('created_at'))
             ->paginate(15)
             ->withQueryString();
 
@@ -43,7 +53,13 @@ final class TermController extends Controller
             'filters' => [
                 'search' => $search,
                 'status' => $status,
+                'telegram' => $telegram,
+                'sector_id' => $sectorId,
+                'term_group_id' => $termGroupId,
+                'sort' => $sort,
             ],
+            'sectors' => Sector::query()->orderBy('title_en')->get(['id', 'title_en']),
+            'termGroups' => TermGroup::query()->orderBy('title_en')->get(['id', 'title_en']),
         ]);
     }
 
