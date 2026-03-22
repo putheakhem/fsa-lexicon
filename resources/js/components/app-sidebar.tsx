@@ -13,6 +13,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { index as referencesIndex } from '@/actions/App/Http/Controllers/Lexicon/ReferenceController';
 import { index as termsIndex } from '@/actions/App/Http/Controllers/Lexicon/TermController';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
@@ -30,7 +31,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'References',
-        href: '#',
+        href: referencesIndex(),
         icon: LibraryBig,
     },
     {

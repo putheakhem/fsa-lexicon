@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Lexicon\Reference;
 use App\Models\Lexicon\Sector;
 use App\Models\Lexicon\Term;
+use App\Models\Lexicon\TermGroup;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -17,6 +17,7 @@ final class HomeController extends Controller
     {
         $search = $request->query('search');
         $sectorId = $request->query('sector_id');
+        $groupId = $request->query('group_id');
         $termId = $request->query('term_id');
 
         $totalCount = Term::where('is_approved', true)->count();
@@ -32,6 +33,7 @@ final class HomeController extends Controller
                 });
             })
             ->when($sectorId, fn ($q) => $q->whereHas('sectors', fn ($sq) => $sq->where('sectors.id', (int) $sectorId)))
+            ->when($groupId, fn ($q) => $q->whereHas('termGroups', fn ($gq) => $gq->where('term_groups.id', (int) $groupId)))
             ->orderBy('term_kh')
             ->get(['id', 'term_kh', 'term_en', 'term_fr'])
             ->map(fn (Term $term) => [
@@ -78,17 +80,23 @@ final class HomeController extends Controller
             ->orderBy('title_en')
             ->get(['id', 'title_en', 'title_kh']);
 
+        $termGroups = TermGroup::query()
+            ->whereNull('parent_id')
+            ->orderBy('title_kh')
+            ->get(['id', 'title_kh', 'title_en']);
+
         return Inertia::render('welcome', [
             'terms' => $terms,
             'selectedTerm' => $selectedTerm,
             'sectors' => $sectors,
+            'termGroups' => $termGroups,
             'totalCount' => $totalCount,
             'filters' => [
                 'search' => $search,
                 'sector_id' => $sectorId,
+                'group_id' => $groupId,
                 'term_id' => $termId,
             ],
         ]);
     }
 }
-
