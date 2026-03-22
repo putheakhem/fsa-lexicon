@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import { BookOpen, FolderGit2, Globe, LayoutGrid, LibraryBig, SendHorizonal, Shapes, Tag } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -13,6 +13,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { index as termsIndex } from '@/actions/App/Http/Controllers/Lexicon/TermController';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 
@@ -21,6 +22,31 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Terms',
+        href: termsIndex(),
+        icon: Tag,
+    },
+    {
+        title: 'References',
+        href: '#',
+        icon: LibraryBig,
+    },
+    {
+        title: 'Sectors',
+        href: '#',
+        icon: Shapes,
+    },
+    {
+        title: 'Groups',
+        href: '#',
+        icon: Globe,
+    },
+    {
+        title: 'Telegram',
+        href: '#',
+        icon: SendHorizonal,
     },
 ];
 

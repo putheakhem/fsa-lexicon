@@ -47,7 +47,6 @@ Optional cross-module bridge:
 - `Reference` belongs to `User` (nullable)
 - `Reference` belongs to many `Term` via `reference_terms`
 - `Reference` has many `ReferenceTerm`
-- `Reference` belongs to many `Document` via `document_references` (optional)
 
 - `Sector` belongs to `User` (nullable)
 - `Sector` belongs to many `Term` via `sector_terms`
@@ -168,20 +167,10 @@ return new class extends Migration {
             $table->string('phone_number')->nullable();
             $table->timestamps();
         });
-
-        // Optional: only if your project has a documents table/module.
-        Schema::create('document_references', function (Blueprint $table): void {
-            $table->id();
-            $table->foreignId('document_id')->constrained();
-            $table->foreignId('reference_id')->constrained();
-            $table->string('note')->nullable();
-            $table->timestamps();
-        });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('document_references');
         Schema::dropIfExists('telegram_accounts');
         Schema::dropIfExists('group_terms');
         Schema::dropIfExists('sector_terms');
