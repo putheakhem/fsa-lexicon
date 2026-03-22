@@ -1,728 +1,447 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
-import { BookOpen, ChevronDown, ChevronRight, ExternalLink, Filter, Globe, MessageSquare, Navigation, Search, Share2 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Head, Link } from '@inertiajs/react';
+import { 
+    ArrowRight,
+    Book,
+    BookOpen, 
+    CheckCircle, 
+    ChevronRight,
+    Database,
+    Globe, 
+    Languages, 
+    Lock,
+    Search, 
+    Shield,
+    TrendingUp,
+    Users,
+    Zap
+} from 'lucide-react';
 
-import HomeController from '@/actions/App/Http/Controllers/HomeController';
-import { dashboard, login } from '@/routes';
+import { explore, login } from '@/routes';
 
-interface Sector {
-    id: number;
-    title_en: string;
-    title_kh: string;
-    children?: Sector[];
-}
-
-interface TermGroup {
-    id: number;
-    title_kh: string;
-    title_en: string;
-}
-
-interface TermListItem {
-    id: number;
-    term_kh: string;
-    term_en: string | null;
-    term_fr: string | null;
-    sectors: Sector[];
-}
-
-interface TermDefinition {
-    id: number;
-    language: string;
-    definition: string;
-    source: string | null;
-}
-
-interface TermReference {
-    id: number;
-    title: string;
-    code: string | null;
-}
-
-interface TermDetail {
-    id: number;
-    term_kh: string;
-    term_en: string | null;
-    term_fr: string | null;
-    sectors: Sector[];
-    definitions: TermDefinition[];
-    references: TermReference[];
-}
-
-interface Filters {
-    search: string | null;
-    sector_id: string | null;
-    group_id: string | null;
-    term_id: string | null;
+interface Stats {
+    totalTerms: number;
+    totalLanguages: number;
+    totalSectors: number;
+    totalReferences: number;
 }
 
 interface Props {
-    terms: TermListItem[];
-    selectedTerm: TermDetail | null;
-    sectors: Sector[];
-    termGroups: TermGroup[];
-    totalCount: number;
-    filters: Filters;
+    stats: Stats;
 }
 
-const languageMeta: Record<string, { label: string; flag: string }> = {
-    khmer: { label: 'ខ្មែរ', flag: '🇰🇭' },
-    english: { label: 'English', flag: '🇬🇧' },
-    french: { label: 'Français', flag: '🇫🇷' },
-};
+const FEATURES = [
+    {
+        icon: Search,
+        title: 'Semantic Search',
+        description: 'Advanced AI-powered search to find terms by meaning, not just keywords'
+    },
+    {
+        icon: Languages,
+        title: 'Multilingual Support',
+        description: 'Complete definitions in Khmer, English, and French for comprehensive understanding'
+    },
+    {
+        icon: Shield,
+        title: 'Regulatory Compliance',
+        description: 'Authoritative terminology approved by financial authorities and regulators'
+    },
+    {
+        icon: Database,
+        title: 'Comprehensive Database',
+        description: 'Extensive collection covering FinTech, banking, and financial services'
+    },
+    {
+        icon: Zap,
+        title: 'Real-time Updates',
+        description: 'Stay current with the latest terminology and regulatory changes'
+    },
+    {
+        icon: Lock,
+        title: 'Secure & Reliable',
+        description: 'Enterprise-grade security for managing sensitive regulatory content'
+    }
+];
 
-function toKhmerNumeral(n: number): string {
-    const digits = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
-    return String(n)
-        .split('')
-        .map((d) => digits[parseInt(d)] ?? d)
-        .join('');
-}
+const SECTORS = [
+    'Digital Payment',
+    'Blockchain',
+    'Lending',
+    'InsurTech',
+    'RegTech',
+    'Cybersecurity',
+    'Digital Banking',
+    'Investment'
+];
 
-export default function Welcome({ terms, selectedTerm, sectors, termGroups, totalCount, filters }: Props) {
-    const { auth } = usePage().props as { auth: { user: { name: string } | null } };
-    const [search, setSearch] = useState(filters.search ?? '');
-    const [semanticSearch, setSemanticSearch] = useState(false);
-    const [isNavigating, setIsNavigating] = useState(false);
-    const [expandedSector, setExpandedSector] = useState<number | null>(null);
-    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    // Sync search input with filters from server
-    useEffect(() => {
-        setSearch(filters.search ?? '');
-    }, [filters.search]);
-
-    // Keyboard navigation for terms
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (!selectedTerm || terms.length === 0) return;
-            
-            const currentIndex = terms.findIndex(t => t.id === selectedTerm.id);
-            
-            if (e.key === 'ArrowDown' && currentIndex < terms.length - 1) {
-                e.preventDefault();
-                handleSelectTerm(terms[currentIndex + 1].id);
-            } else if (e.key === 'ArrowUp' && currentIndex > 0) {
-                e.preventDefault();
-                handleSelectTerm(terms[currentIndex - 1].id);
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [selectedTerm, terms]);
-
-    const navigate = (params: Record<string, string | null | undefined>, options: { preserveScroll?: boolean } = {}) => {
-        setIsNavigating(true);
-        router.get(HomeController.url(), params as Record<string, string>, {
-            preserveState: true,
-            replace: true,
-            preserveScroll: options.preserveScroll ?? true,
-            only: ['terms', 'selectedTerm', 'totalCount', 'filters'],
-            onFinish: () => setIsNavigating(false),
-        });
-    };
-
-    const handleSearch = (value: string) => {
-        setSearch(value);
-        if (timerRef.current) {
-            clearTimeout(timerRef.current);
-        }
-        timerRef.current = setTimeout(() => {
-            navigate(
-                {
-                    search: value || null,
-                    sector_id: filters.sector_id,
-                    group_id: filters.group_id,
-                },
-                { preserveScroll: true }
-            );
-        }, 350);
-    };
-
-    const handleSector = (sectorId: number | null) => {
-        navigate(
-            {
-                search: filters.search,
-                sector_id: sectorId ? String(sectorId) : null,
-                group_id: filters.group_id,
-            },
-            { preserveScroll: false }
-        );
-    };
-
-    const handleGroup = (groupId: number | null) => {
-        navigate(
-            {
-                search: filters.search,
-                sector_id: filters.sector_id,
-                group_id: groupId ? String(groupId) : null,
-            },
-            { preserveScroll: false }
-        );
-    };
-
-    const handleSelectTerm = (termId: number) => {
-        navigate(
-            {
-                search: filters.search,
-                sector_id: filters.sector_id,
-                group_id: filters.group_id,
-                term_id: String(termId),
-            },
-            { preserveScroll: true }
-        );
-    };
-
-    const activeSectorId = filters.sector_id ? parseInt(filters.sector_id) : null;
-    const activeGroupId = filters.group_id ? parseInt(filters.group_id) : null;
-
+export default function Welcome({ stats }: Props) {
     return (
         <>
-            <Head title="National Lexicon — ពាក្យគន្លឹះហិរញ្ញវត្ថុ" />
-            <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-gray-950">
-
-                {/* ─── Navbar ─────────────────────────────────────────────── */}
-                <header className="sticky top-0 z-30 border-b border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                    <div className="mx-auto flex max-w-screen-xl items-center justify-between px-4 py-2.5 sm:px-6">
-                        {/* Logo */}
-                        <div className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">
-                                <BookOpen className="h-5 w-5" />
+            <Head title="FSA FinTech Lexicon — Financial Services Authority" />
+            <div className="min-h-screen bg-white">
+                
+                {/* Navigation Header */}
+                <header className="sticky top-0 z-50 border-b border-neutral-200 bg-white/95 shadow-sm backdrop-blur-sm">
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <div className="flex h-16 items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 shadow-md">
+                                    <BookOpen className="h-6 w-6 text-white" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-lg font-bold leading-none text-neutral-900">
+                                        FSA FinTech Lexicon
+                                    </span>
+                                    <span className="text-xs font-medium text-neutral-500">
+                                        Financial Services Authority
+                                    </span>
+                                </div>
                             </div>
-                            <div className="leading-tight">
-                                <p className="text-sm font-bold text-gray-900 dark:text-white">National Lexicon</p>
-                                <p className="text-[10px] font-medium tracking-widest text-gray-400 uppercase">Public Portal</p>
-                            </div>
+                            
+                            <nav className="hidden items-center space-x-8 md:flex">
+                                <a href="#features" className="text-sm font-medium text-neutral-600 transition-colors hover:text-blue-600">
+                                    Features
+                                </a>
+                                <a href="#sectors" className="text-sm font-medium text-neutral-600 transition-colors hover:text-blue-600">
+                                    Sectors
+                                </a>
+                                <a href="#about" className="text-sm font-medium text-neutral-600 transition-colors hover:text-blue-600">
+                                    About
+                                </a>
+                                <Link 
+                                    href={login()} 
+                                    className="inline-flex items-center rounded-lg border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-600 transition-all hover:border-blue-300 hover:text-blue-600"
+                                >
+                                    Admin Login
+                                </Link>
+                            </nav>
                         </div>
-
-                        {/* Nav */}
-                        <nav className="hidden items-center gap-1 md:flex">
-                            <span className="flex cursor-pointer items-center gap-1 rounded-md px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800">
-                                <Globe className="h-3.5 w-3.5" />
-                                <span>KH</span>
-                            </span>
-                            <span className="mx-1 h-4 w-px bg-gray-300 dark:bg-gray-600" />
-                            <a href="#terms" className="rounded-md px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800">
-                                Browse Terms
-                            </a>
-                            <a href="#sectors" className="rounded-md px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800">
-                                Sectors
-                            </a>
-                        </nav>
-
-                        {/* CTA */}
-                        {auth?.user ? (
-                            <Link
-                                href={dashboard()}
-                                className="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
-                            >
-                                Dashboard
-                            </Link>
-                        ) : (
-                            <Link
-                                href={login()}
-                                className="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
-                            >
-                                Admin Login
-                            </Link>
-                        )}
                     </div>
                 </header>
 
-                {/* ─── Search Bar ─────────────────────────────────────────── */}
-                <div className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900 sm:px-6">
-                    <div className="mx-auto max-w-screen-xl">
-                        <div className="flex items-center gap-3">
-                            {/* Search input */}
-                            <div className="relative flex-1">
-                                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                                <input
-                                    type="text"
-                                    value={search}
-                                    onChange={(e) => handleSearch(e.target.value)}
-                                    placeholder="ស្វែងរកពាក្យបច្ចេកទេសសំខាន់..."
-                                    className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-9 pr-10 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500"
-                                />
-                                {isNavigating && (
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600" />
+                {/* Hero Section */}
+                <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/30 to-white">
+                    <div className="absolute inset-0 -z-10 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]"></div>
+                    
+                    <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
+                        <div className="grid items-center gap-12 lg:grid-cols-2">
+                            
+                            {/* Left Content */}
+                            <div className="text-center lg:text-left">
+                                <div className="mb-6 inline-flex items-center rounded-full bg-blue-100 px-4 py-1.5 text-sm font-semibold text-blue-700 shadow-sm">
+                                    <Zap className="mr-2 h-4 w-4" />
+                                    Powered by AI-Driven Semantic Search
+                                </div>
+                                
+                                <h1 className="mb-6 text-4xl font-bold leading-tight text-neutral-900 sm:text-5xl lg:text-6xl">
+                                    <span className="text-blue-600">FinTech</span> Terminology Database
+                                </h1>
+                                        
+                                <p className="mx-auto mb-8 max-w-2xl text-lg leading-relaxed text-neutral-600 sm:text-xl lg:mx-0">
+                                    A comprehensive, multilingual lexicon for financial technology and regulatory terminology. Built for regulators, researchers, and industry professionals.
+                                </p>
+                                
+                                <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+                                    <Link 
+                                        href={explore()} 
+                                        className="group inline-flex items-center justify-center rounded-xl bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition-all hover:bg-blue-700 hover:shadow-xl"
+                                    >
+                                        Explore Terms
+                                        <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                                    </Link>
+                                    
+                                    <a 
+                                        href="#features" 
+                                        className="inline-flex items-center justify-center rounded-xl border border-neutral-200 bg-white px-8 py-4 text-base font-semibold text-neutral-700 shadow-sm transition-all hover:border-neutral-300 hover:bg-neutral-50"
+                                    >
+                                        Learn More
+                                    </a>
+                                </div>
+                                
+                                <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-neutral-500 lg:justify-start">
+                                    <div className="flex items-center">
+                                        <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
+                                        Official Document
                                     </div>
-                                )}
+                                    <div className="flex items-center">
+                                        <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
+                                        {stats.totalLanguages} Languages
+                                    </div>
+                                    <div className="flex items-center">
+                                        <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
+                                        {stats.totalTerms.toLocaleString()}+ Terms
+                                    </div>
+                                </div>
                             </div>
-
-                            {/* Action buttons */}
-                            <button className="flex items-center gap-1.5 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-medium text-blue-700 hover:bg-blue-100 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-400">
-                                <MessageSquare className="h-3.5 w-3.5" />
-                                <span className="hidden sm:inline">ផ្នែកគតិយុត្ត</span>
-                            </button>
-                            <button className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
-                                <Navigation className="h-3.5 w-3.5" />
-                                <span className="hidden sm:inline">ចាក្យតាក</span>
-                            </button>
-                            <button className="flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700">
-                                <Share2 className="h-3.5 w-3.5" />
-                                <span className="hidden sm:inline">ចែករំលែក</span>
-                            </button>
-                        </div>
-
-                        {/* Semantic search + count */}
-                        <div className="mt-2 flex items-center justify-between">
-                            <button
-                                onClick={() => setSemanticSearch(!semanticSearch)}
-                                className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400"
-                            >
-                                <span
-                                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                                        semanticSearch ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
-                                    }`}
-                                >
-                                    <span
-                                        className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
-                                            semanticSearch ? 'translate-x-4' : 'translate-x-1'
-                                        }`}
-                                    />
-                                </span>
-                                ការស្វែងរយល់ន័យ (Semantic Search)
-                            </button>
-                            <span className="text-xs text-gray-400">
-                                {totalCount.toLocaleString()} ពាក្យ
-                            </span>
+                            
+                            {/* Right Visual */}
+                            <div className="relative hidden lg:block">
+                                <div className="relative min-h-[400px]">
+                                    {/* Featured Term Card - Top Right */}
+                                    <div className="absolute right-0 top-0 w-72 rotate-3 rounded-2xl border border-neutral-100 bg-white p-6 shadow-2xl transition-transform hover:rotate-0">
+                                        <div className="mb-4 flex items-center">
+                                            <div className="mr-3 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
+                                                <BookOpen className="h-6 w-6 text-blue-600" />
+                                            </div>
+                                            <div>
+                                                <div className="text-xs font-medium text-neutral-500">Featured Term</div>
+                                                <div className="text-sm font-bold text-neutral-900">FinTech</div>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2 text-xs">
+                                            <div className="flex items-center text-neutral-600">
+                                                <span className="mr-2">🇰🇭</span>
+                                                <span>បច្ចេកវិទ្យាហិរញ្ញវត្ថុ</span>
+                                            </div>
+                                            <div className="flex items-center text-neutral-600">
+                                                <span className="mr-2">🇬🇧</span>
+                                                <span>Financial Technology</span>
+                                            </div>
+                                            <div className="flex items-center text-neutral-600">
+                                                <span className="mr-2">🇫🇷</span>
+                                                <span>Technologie Financière</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Search Card - Center Left */}
+                                    <div className="absolute left-0 top-32 w-64 -rotate-2 rounded-xl border border-neutral-100 bg-white p-5 shadow-xl transition-transform hover:rotate-0">
+                                        <div className="mb-3 flex items-center justify-between">
+                                            <span className="text-xs font-semibold uppercase text-neutral-500">Search</span>
+                                            <Search className="h-4 w-4 text-neutral-400" />
+                                        </div>
+                                        <div className="mb-2 h-2 rounded-full bg-neutral-100"></div>
+                                        <div className="h-2 w-3/4 rounded-full bg-neutral-100"></div>
+                                    </div>
+                                    
+                                    {/* Stats Card - Bottom Right */}
+                                    <div className="absolute right-12 top-56 w-56 rotate-6 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 p-5 text-white shadow-xl transition-transform hover:rotate-0">
+                                        <div className="mb-1 text-3xl font-bold">{stats.totalTerms.toLocaleString()}</div>
+                                        <div className="text-sm opacity-90">Terms Available</div>
+                                        <div className="mt-3 flex items-center text-xs opacity-80">
+                                            <TrendingUp className="mr-1 h-4 w-4" />
+                                            +{Math.floor(stats.totalTerms / 10)} this month
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
-                </div>
+                </section>
 
-                {/* ─── Main two-panel layout ───────────────────────────────── */}
-                <div id="terms" className="mx-auto flex w-full max-w-screen-xl flex-1 gap-0 px-4 py-5 sm:px-6">
-                    {/* LEFT PANEL */}
-                    <div className="mr-4 flex w-72 shrink-0 flex-col">
-                        <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                            {/* Filter section */}
-                            <div className="border-b border-gray-100 px-4 py-3 dark:border-gray-700">
-                                <div className="flex flex-wrap gap-2">
-                                    {/* All button */}
-                                    <button
-                                        onClick={() => {
-                                            handleSector(null);
-                                            handleGroup(null);
-                                            setExpandedSector(null);
-                                        }}
-                                        className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-                                            activeSectorId === null && activeGroupId === null
-                                                ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
-                                                : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-                                        }`}
-                                    >
-                                        ទាំងអស់
-                                    </button>
-
-                                    {/* Term Groups */}
-                                    {termGroups.slice(0, 2).map((group) => (
-                                        <button
-                                            key={group.id}
-                                            onClick={() => {
-                                                handleGroup(group.id);
-                                                setExpandedSector(null);
-                                            }}
-                                            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-                                                activeGroupId === group.id
-                                                    ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
-                                                    : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-                                            }`}
-                                        >
-                                            {group.title_kh}
-                                        </button>
-                                    ))}
-
-                                    {/* Sectors with dropdown */}
-                                    {sectors.slice(0, 3).map((sector) => (
-                                        <div key={sector.id} className="relative">
-                                            <button
-                                                onClick={() => {
-                                                    if (sector.children && sector.children.length > 0) {
-                                                        setExpandedSector(expandedSector === sector.id ? null : sector.id);
-                                                    } else {
-                                                        handleSector(sector.id);
-                                                        setExpandedSector(null);
-                                                    }
-                                                }}
-                                                className={`flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-                                                    activeSectorId === sector.id || (sector.children && sector.children.some(c => c.id === activeSectorId))
-                                                        ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
-                                                        : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-                                                }`}
-                                            >
-                                                {sector.title_kh}
-                                                {sector.children && sector.children.length > 0 && (
-                                                    <ChevronDown className="h-3 w-3" />
-                                                )}
-                                            </button>
-                                            {/* Dropdown for children */}
-                                            {expandedSector === sector.id && sector.children && sector.children.length > 0 && (
-                                                <div className="absolute left-0 top-full z-10 mt-1 w-48 rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-800">
-                                                    <button
-                                                        onClick={() => {
-                                                            handleSector(sector.id);
-                                                            setExpandedSector(null);
-                                                        }}
-                                                        className="w-full px-3 py-1.5 text-left text-xs hover:bg-gray-100 dark:hover:bg-gray-700"
-                                                    >
-                                                        <span className="font-medium text-gray-700 dark:text-gray-300">
-                                                            {sector.title_kh} (All)
-                                                        </span>
-                                                    </button>
-                                                    <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
-                                                    {sector.children.map((child) => (
-                                                        <button
-                                                            key={child.id}
-                                                            onClick={() => {
-                                                                handleSector(child.id);
-                                                                setExpandedSector(null);
-                                                            }}
-                                                            className={`w-full px-3 py-1.5 text-left text-xs hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                                                                activeSectorId === child.id
-                                                                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400'
-                                                                    : 'text-gray-600 dark:text-gray-400'
-                                                            }`}
-                                                        >
-                                                            {child.title_kh}
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
-
-                                    {/* More button */}
-                                    {(sectors.length > 3 || termGroups.length > 2) && (
-                                        <button
-                                            className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                                        >
-                                            ផ្សេងៗ
-                                        </button>
-                                    )}
+                {/* Stats Section */}
+                <section className="border-y border-neutral-100 bg-white py-12">
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+                            <div className="text-center">
+                                <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                                    <BookOpen className="h-6 w-6" />
                                 </div>
-
-                                {/* Semantic search toggle */}
-                                <div className="mt-3 flex items-center gap-2">
-                                    <button
-                                        onClick={() => setSemanticSearch(!semanticSearch)}
-                                        className="flex items-center gap-2"
-                                    >
-                                        <span
-                                            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                                                semanticSearch ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
-                                            }`}
-                                        >
-                                            <span
-                                                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
-                                                    semanticSearch ? 'translate-x-4' : 'translate-x-1'
-                                                }`}
-                                            />
-                                        </span>
-                                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                                            បញ្ញាត្តិហ្វាណាដម្លោះចោនហេរ
-                                        </span>
-                                    </button>
-                                </div>
+                                <div className="mb-1 text-3xl font-bold text-neutral-900">{stats.totalTerms.toLocaleString()}</div>
+                                <div className="text-sm font-medium text-neutral-500">Total Terms</div>
                             </div>
-
-                            {/* Term list */}
-                            {terms.length === 0 ? (
-                                <div className="flex flex-col items-center py-10 text-center">
-                                    <Search className="mb-2 h-7 w-7 text-gray-300" />
-                                    <p className="text-xs text-gray-400">រកមិនឃើញពាក្យ</p>
-                                    {(filters.search || activeGroupId) && (
-                                        <button
-                                            onClick={() => { setSearch(''); navigate({}); }}
-                                            className="mt-2 text-xs text-blue-500 hover:underline"
-                                        >
-                                            លុបការស្វែងរក
-                                        </button>
-                                    )}
+                            <div className="text-center">
+                                <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                                    <Languages className="h-6 w-6" />
                                 </div>
-                            ) : (
+                                <div className="mb-1 text-3xl font-bold text-neutral-900">{stats.totalLanguages}</div>
+                                <div className="text-sm font-medium text-neutral-500">Languages</div>
+                            </div>
+                            <div className="text-center">
+                                <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                                    <Database className="h-6 w-6" />
+                                </div>
+                                <div className="mb-1 text-3xl font-bold text-neutral-900">{stats.totalSectors}</div>
+                                <div className="text-sm font-medium text-neutral-500">Sectors</div>
+                            </div>
+                            <div className="text-center">
+                                <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                                    <Book className="h-6 w-6" />
+                                </div>
+                                <div className="mb-1 text-3xl font-bold text-neutral-900">{stats.totalReferences}</div>
+                                <div className="text-sm font-medium text-neutral-500">References</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Features Section */}
+                <section id="features" className="bg-neutral-50 py-20">
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <div className="mb-16 text-center">
+                            <h2 className="mb-4 text-3xl font-bold text-neutral-900 sm:text-4xl">
+                                Why Choose FSA FinTech Lexicon?
+                            </h2>
+                            <p className="mx-auto max-w-2xl text-lg text-neutral-600">
+                                A powerful platform designed for financial professionals, regulators, and researchers
+                            </p>
+                        </div>
+                        
+                        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                            {FEATURES.map((feature, idx) => (
                                 <div 
-                                    className={`space-y-2 overflow-y-auto p-3 transition-opacity duration-200 ${
-                                        isNavigating ? 'opacity-50' : 'opacity-100'
-                                    }`} 
-                                    style={{ maxHeight: 'calc(100vh - 260px)' }}
+                                    key={idx}
+                                    className="group rounded-2xl border border-neutral-200 bg-white p-8 transition-all hover:border-blue-300 hover:shadow-lg"
                                 >
-                                    {terms.map((term) => {
-                                        const isSelected = selectedTerm?.id === term.id;
-                                        return (
-                                            <button
-                                                key={term.id}
-                                                onClick={() => handleSelectTerm(term.id)}
-                                                className={`group relative w-full rounded-lg px-4 py-3.5 text-left transition-all ${
-                                                    isSelected
-                                                        ? 'bg-gradient-to-br from-blue-50 to-purple-50 shadow-sm ring-1 ring-blue-200 dark:from-blue-950/50 dark:to-purple-950/30 dark:ring-blue-800'
-                                                        : 'bg-white hover:bg-gray-50 hover:shadow-sm dark:bg-gray-800/50 dark:hover:bg-gray-800'
-                                                }`}
-                                            >
-                                                <div className="flex items-start justify-between gap-2">
-                                                    <div className="min-w-0 flex-1">
-                                                        <p
-                                                            className={`mb-1.5 text-base font-bold leading-snug ${
-                                                                isSelected
-                                                                    ? 'text-blue-700 dark:text-blue-400'
-                                                                    : 'text-gray-900 dark:text-white'
-                                                            }`}
-                                                        >
-                                                            {term.term_kh}
-                                                        </p>
-                                                        <div className="space-y-0.5">
-                                                            {term.term_en && (
-                                                                <p className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-                                                                    <span className="text-sm">🇬🇧</span>
-                                                                    <span>{term.term_en}</span>
-                                                                </p>
-                                                            )}
-                                                            {term.term_fr && (
-                                                                <p className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-                                                                    <span className="text-sm">🇫🇷</span>
-                                                                    <span>{term.term_fr}</span>
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                        {term.sectors.length > 0 && (
-                                                            <div className="mt-2 flex flex-wrap gap-1">
-                                                                {term.sectors.slice(0, 2).map((s) => (
-                                                                    <span
-                                                                        key={s.id}
-                                                                        className={`inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] font-medium ${
-                                                                            isSelected
-                                                                                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
-                                                                                : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
-                                                                        }`}
-                                                                    >
-                                                                        <span className="text-[8px]">🏷️</span>
-                                                                        {s.title_en}
-                                                                    </span>
-                                                                ))}
-                                                                {term.sectors.length > 2 && (
-                                                                    <span
-                                                                        className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${
-                                                                            isSelected
-                                                                                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
-                                                                                : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
-                                                                        }`}
-                                                                    >
-                                                                        +{term.sectors.length - 2}
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    {isSelected && (
-                                                        <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-blue-500" />
-                                                    )}
-                                                </div>
-                                            </button>
-                                        );
-                                    })}
+                                    <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-blue-100 transition-colors group-hover:bg-blue-600">
+                                        <feature.icon className="h-7 w-7 text-blue-600 transition-colors group-hover:text-white" />
+                                    </div>
+                                    <h3 className="mb-3 text-xl font-bold text-neutral-900">{feature.title}</h3>
+                                    <p className="leading-relaxed text-neutral-600">{feature.description}</p>
                                 </div>
-                            )}
+                            ))}
                         </div>
                     </div>
+                </section>
 
-                    {/* RIGHT PANEL */}
-                    <div className="flex-1 min-w-0">
-                        {selectedTerm ? (
-                            <div 
-                                key={selectedTerm.id}
-                                className="animate-in fade-in duration-300 rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900"
-                            >
-                                {/* Term header */}
-                                <div className="space-y-4 px-6 py-6">
-                                    {/* Sector tags at top */}
-                                    {selectedTerm.sectors.length > 0 && (
-                                        <div className="flex flex-wrap gap-2">
-                                            {selectedTerm.sectors.map((s) => (
-                                                <span
-                                                    key={s.id}
-                                                    className="inline-flex items-center gap-1 rounded-md border border-blue-300 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600 dark:border-blue-700 dark:bg-blue-950/40 dark:text-blue-400"
-                                                >
-                                                    <span className="text-[10px]">🏷️</span>
-                                                    {s.title_kh}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    {/* Khmer title */}
-                                    <h1 className="text-3xl font-bold leading-tight text-gray-900 dark:text-white">
-                                        {selectedTerm.term_kh}
-                                    </h1>
-
-                                    {/* Translation boxes */}
-                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                        {selectedTerm.term_en && (
-                                            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
-                                                <div className="mb-2 flex items-center gap-1.5">
-                                                    <span className="text-base">🇬🇧</span>
-                                                    <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                                                        English
-                                                    </span>
-                                                </div>
-                                                <p className="text-base font-medium text-gray-900 dark:text-white">
-                                                    {selectedTerm.term_en}
-                                                </p>
-                                            </div>
-                                        )}
-                                        {selectedTerm.term_fr && (
-                                            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
-                                                <div className="mb-2 flex items-center gap-1.5">
-                                                    <span className="text-base">🇫🇷</span>
-                                                    <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                                                        Français
-                                                    </span>
-                                                </div>
-                                                <p className="text-base font-medium text-gray-900 dark:text-white">
-                                                    {selectedTerm.term_fr}
-                                                </p>
-                                            </div>
-                                        )}
-                                    </div>
+                {/* Sectors Section */}
+                <section id="sectors" className="bg-white py-20">
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <div className="mb-12 text-center">
+                            <h2 className="mb-4 text-3xl font-bold text-neutral-900 sm:text-4xl">
+                                Comprehensive Coverage Across Sectors
+                            </h2>
+                            <p className="mx-auto max-w-2xl text-lg text-neutral-600">
+                                Specialized terminology for every area of financial technology
+                            </p>
+                        </div>
+                        
+                        <div className="flex flex-wrap justify-center gap-3">
+                            {SECTORS.map((sector, idx) => (
+                                <div 
+                                    key={idx}
+                                    className="cursor-default rounded-full border border-neutral-200 bg-neutral-50 px-6 py-3 text-sm font-semibold text-neutral-700 transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                                >
+                                    {sector}
                                 </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
 
-                                {/* Definitions */}
-                                {selectedTerm.definitions.length > 0 && (
-                                    <div className="border-t border-gray-100 px-6 py-5 dark:border-gray-700">
-                                        <div className="mb-4 flex items-center gap-2 text-base font-semibold text-blue-600 dark:text-blue-400">
-                                            <BookOpen className="h-4 w-4" />
-                                            និយមន័យ (Definitions)
-                                        </div>
-                                        <div className="space-y-3">
-                                            {selectedTerm.definitions.map((def) => {
-                                                const meta = languageMeta[def.language] ?? { label: def.language, flag: '🌐' };
-                                                return (
-                                                    <div 
-                                                        key={def.id} 
-                                                        className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50"
-                                                    >
-                                                        <div className="mb-2.5 flex items-center gap-2">
-                                                            <span className="text-lg">{meta.flag}</span>
-                                                            <span className="font-semibold text-gray-900 dark:text-white">
-                                                                {meta.label}
-                                                            </span>
-                                                        </div>
-                                                        <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
-                                                            {def.definition}
-                                                        </p>
-                                                        {def.source && (
-                                                            <div className="mt-3 border-t border-gray-200 pt-2.5 dark:border-gray-700">
-                                                                <p className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-                                                                    <BookOpen className="h-3 w-3" />
-                                                                    <span className="font-medium text-gray-600 dark:text-gray-400">
-                                                                        {def.source}
-                                                                    </span>
-                                                                </p>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                )}
+                {/* CTA Section */}
+                <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-slate-800 py-20">
+                    <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+                        <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm">
+                            <Globe className="h-8 w-8 text-white" />
+                        </div>
+                        
+                        <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+                            Ready to Explore the Lexicon?
+                        </h2>
+                        <p className="mx-auto mb-8 max-w-2xl text-lg text-blue-100">
+                            Access thousands of verified financial technology terms in multiple languages
+                        </p>
+                        
+                        <div className="flex flex-col justify-center gap-4 sm:flex-row">
+                            <Link 
+                                href={explore()} 
+                                className="group inline-flex items-center justify-center rounded-xl bg-white px-8 py-4 text-base font-semibold text-blue-700 shadow-lg transition-all hover:bg-blue-50 hover:shadow-xl"
+                            >
+                                Browse Public Portal
+                                <ChevronRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                            </Link>
+                            
+                            <Link 
+                                href={login()} 
+                                className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
+                            >
+                                Admin Dashboard
+                            </Link>
+                        </div>
+                    </div>
+                </section>
 
-                                {selectedTerm.definitions.length === 0 && (
-                                    <div className="border-t border-gray-100 px-6 py-8 text-center dark:border-gray-700">
-                                        <p className="text-sm italic text-gray-400">
-                                            មិនទាន់មានការពន្យល់ន័យ
-                                        </p>
-                                    </div>
-                                )}
-
-                                {/* References */}
-                                {selectedTerm.references.length > 0 && (
-                                    <div className="border-t border-gray-100 px-6 pb-6 pt-5 dark:border-gray-700">
-                                        <div className="mb-4 flex items-center gap-2 text-base font-semibold text-blue-600 dark:text-blue-400">
-                                            <BookOpen className="h-4 w-4" />
-                                            អ្នកសារយោង
-                                        </div>
-                                        <div className="space-y-2.5">
-                                            {selectedTerm.references.map((ref, idx) => (
-                                                <div
-                                                    key={ref.id}
-                                                    className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3.5 dark:border-gray-700 dark:bg-gray-800/50"
-                                                >
-                                                    <ExternalLink className="mt-0.5 h-4 w-4 shrink-0 text-blue-500 dark:text-blue-400" />
-                                                    <div className="flex-1 text-sm text-gray-700 dark:text-gray-300">
-                                                        <span className="mr-2 font-mono text-xs font-medium text-gray-500 dark:text-gray-400">
-                                                            [{toKhmerNumeral(idx + 1)}]
-                                                        </span>
-                                                        {ref.code && (
-                                                            <span className="mr-2 rounded bg-gray-200 px-1.5 py-0.5 font-mono text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-400">
-                                                                {ref.code}
-                                                            </span>
-                                                        )}
-                                                        <span className="font-medium">{ref.title}</span>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
+                {/* About Section */}
+                <section id="about" className="bg-neutral-50 py-20">
+                    <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+                        <div className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm sm:p-12">
+                            <div className="mb-6 flex items-center">
+                                <div className="mr-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
+                                    <Shield className="h-6 w-6 text-blue-600" />
+                                </div>
+                                <h2 className="text-2xl font-bold text-neutral-900 sm:text-3xl">
+                                    About FSA FinTech Lexicon
+                                </h2>
                             </div>
-                        ) : (
-                            <div className="flex h-80 flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white text-center dark:border-gray-700 dark:bg-gray-900">
-                                <BookOpen className="mb-3 h-9 w-9 text-gray-300" />
-                                <p className="text-sm font-medium text-gray-400">
-                                    ជ្រើសយកពាក្យមួយដើម្បីមើលន័យ
+                            
+                            <div className="space-y-4 leading-relaxed text-neutral-600">
+                                <p>
+                                    The <strong className="text-neutral-900">FSA FinTech Lexicon</strong> is a comprehensive terminology management system developed by the Financial Services Authority to standardize financial technology terminology across regulatory bodies, financial institutions, and research organizations.
+                                </p>
+                                <p>
+                                    Our mission is to promote clarity and consistency in financial communication by providing authoritative, multilingual definitions for key terms in the rapidly evolving FinTech sector.
+                                </p>
+                                <p>
+                                    With contributions from regulatory experts, linguists, and industry professionals, the lexicon serves as the definitive reference for Khmer, English, and French financial terminology.
                                 </p>
                             </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* ─── Sectors section ────────────────────────────────────── */}
-                {sectors.length > 0 && (
-                    <div id="sectors" className="border-t border-gray-200 bg-white px-4 py-8 dark:border-gray-800 dark:bg-gray-900 sm:px-6">
-                        <div className="mx-auto max-w-screen-xl">
-                            <h2 className="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                វិស័យ (Sectors)
-                            </h2>
-                            <div className="flex flex-wrap gap-2">
-                                {sectors.map((sector) => (
-                                    <button
-                                        key={sector.id}
-                                        onClick={() =>
-                                            navigate(
-                                                {
-                                                    search: filters.search,
-                                                    sector_id: String(sector.id),
-                                                    group_id: filters.group_id,
-                                                },
-                                                { preserveScroll: false }
-                                            )
-                                        }
-                                        className="rounded-full border border-gray-200 px-4 py-1.5 text-sm text-gray-600 transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 hover:shadow-sm dark:border-gray-700 dark:text-gray-400 dark:hover:border-blue-700 dark:hover:bg-blue-950 dark:hover:text-blue-400"
-                                    >
-                                        {sector.title_kh}
-                                        <span className="ml-1.5 text-xs text-gray-400">{sector.title_kh}</span>
-                                    </button>
-                                ))}
+                            
+                            <div className="mt-8 flex flex-wrap items-center gap-6 border-t border-neutral-100 pt-8">
+                                <div className="flex items-center text-sm text-neutral-600">
+                                    <Users className="mr-2 h-5 w-5 text-neutral-400" />
+                                    <span>For Regulators, Researchers & Professionals</span>
+                                </div>
+                                <div className="flex items-center text-sm text-neutral-600">
+                                    <Globe className="mr-2 h-5 w-5 text-neutral-400" />
+                                    <span>Multilingual Support</span>
+                                </div>
+                                <div className="flex items-center text-sm text-neutral-600">
+                                    <Shield className="mr-2 h-5 w-5 text-neutral-400" />
+                                    <span>Verified & Authoritative</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                )}
+                </section>
 
-                {/* ─── Footer ─────────────────────────────────────────────── */}
-                <footer className="border-t border-gray-200 bg-white py-4 text-center dark:border-gray-800 dark:bg-gray-900">
-                    <p className="text-xs text-gray-400">
-                        Financial Supervisory Authority of Cambodia · Lexicon &copy; {new Date().getFullYear()}
-                        {!auth?.user && (
-                            <>
-                                {' · '}
-                                <Link href={login()} className="text-blue-500 hover:underline">
-                                    Admin Login
-                                </Link>
-                            </>
-                        )}
-                    </p>
+                {/* Footer */}
+                <footer className="bg-slate-900 py-12 text-white">
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <div className="mb-8 grid gap-8 md:grid-cols-4">
+                            <div className="md:col-span-2">
+                                <div className="mb-4 flex items-center space-x-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600">
+                                        <BookOpen className="h-6 w-6 text-white" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-lg font-bold leading-none">FSA FinTech Lexicon</span>
+                                        <span className="text-xs text-neutral-400">Financial Services Authority</span>
+                                    </div>
+                                </div>
+                                <p className="max-w-md text-sm leading-relaxed text-neutral-400">
+                                    The definitive source for financial technology terminology. Empowering regulators, researchers, and professionals with standardized multilingual definitions.
+                                </p>
+                            </div>
+                            
+                            <div>
+                                <h3 className="mb-4 font-semibold">Quick Links</h3>
+                                <ul className="space-y-2 text-sm text-neutral-400">
+                                    <li><Link href={explore()} className="transition-colors hover:text-white">Browse Terms</Link></li>
+                                    <li><a href="#features" className="transition-colors hover:text-white">Features</a></li>
+                                    <li><a href="#sectors" className="transition-colors hover:text-white">Sectors</a></li>
+                                    <li><a href="#about" className="transition-colors hover:text-white">About Us</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <h3 className="mb-4 font-semibold">Resources</h3>
+                                <ul className="space-y-2 text-sm text-neutral-400">
+                                    <li><a href="#" className="transition-colors hover:text-white">Documentation</a></li>
+                                    <li><a href="#" className="transition-colors hover:text-white">API Access</a></li>
+                                    <li><a href="#" className="transition-colors hover:text-white">Privacy Policy</a></li>
+                                    <li><a href="#" className="transition-colors hover:text-white">Terms of Use</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div className="flex flex-col items-center justify-between border-t border-neutral-800 pt-8 text-sm text-neutral-400 sm:flex-row">
+                            <p>© 2026 Financial Services Authority. All rights reserved.</p>
+                            <p className="mt-2 sm:mt-0">Built with precision for regulatory excellence</p>
+                        </div>
+                    </div>
                 </footer>
+                
             </div>
         </>
     );
