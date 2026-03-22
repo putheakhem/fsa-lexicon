@@ -77,8 +77,10 @@ final class HomeController extends Controller
         }
 
         $sectors = Sector::query()
+            ->whereNull('parent_id')
+            ->with(['children' => fn ($q) => $q->orderBy('title_en')->select('id', 'title_en', 'title_kh', 'parent_id')])
             ->orderBy('title_en')
-            ->get(['id', 'title_en', 'title_kh']);
+            ->get(['id', 'title_en', 'title_kh', 'parent_id']);
 
         $termGroups = TermGroup::query()
             ->whereNull('parent_id')

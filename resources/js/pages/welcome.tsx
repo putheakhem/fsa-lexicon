@@ -1,5 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { BookOpen, ChevronRight, ExternalLink, Filter, Globe, MessageSquare, Navigation, Search, Share2 } from 'lucide-react';
+import { BookOpen, ChevronDown, ChevronRight, ExternalLink, Filter, Globe, MessageSquare, Navigation, Search, Share2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 import HomeController from '@/actions/App/Http/Controllers/HomeController';
@@ -9,6 +9,7 @@ interface Sector {
     id: number;
     title_en: string;
     title_kh: string;
+    children?: Sector[];
 }
 
 interface TermGroup {
@@ -83,6 +84,7 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
     const [search, setSearch] = useState(filters.search ?? '');
     const [semanticSearch, setSemanticSearch] = useState(false);
     const [isNavigating, setIsNavigating] = useState(false);
+    const [expandedSector, setExpandedSector] = useState<number | null>(null);
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // Sync search input with filters from server
@@ -138,6 +140,17 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
         }, 350);
     };
 
+    const handleSector = (sectorId: number | null) => {
+        navigate(
+            {
+                search: filters.search,
+                sector_id: sectorId ? String(sectorId) : null,
+                group_id: filters.group_id,
+            },
+            { preserveScroll: false }
+        );
+    };
+
     const handleGroup = (groupId: number | null) => {
         navigate(
             {
@@ -161,6 +174,7 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
         );
     };
 
+    const activeSectorId = filters.sector_id ? parseInt(filters.sector_id) : null;
     const activeGroupId = filters.group_id ? parseInt(filters.group_id) : null;
 
     return (
@@ -283,36 +297,133 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                     {/* LEFT PANEL */}
                     <div className="mr-4 flex w-72 shrink-0 flex-col">
                         <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                            {/* Filter chips */}
+                            {/* Filter section */}
                             <div className="border-b border-gray-100 px-4 py-3 dark:border-gray-700">
-                                <div className="mb-2.5 flex items-center gap-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                    <Filter className="h-3.5 w-3.5" />
-                                    ប្រភេទពាក្យ
-                                </div>
-                                <div className="flex flex-wrap gap-1.5">
+                                <div className="flex flex-wrap gap-2">
+                                    {/* All button */}
                                     <button
-                                        onClick={() => handleGroup(null)}
-                                        className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                                            activeGroupId === null
-                                                ? 'bg-blue-600 text-white'
-                                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                                        onClick={() => {
+                                            handleSector(null);
+                                            handleGroup(null);
+                                            setExpandedSector(null);
+                                        }}
+                                        className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+                                            activeSectorId === null && activeGroupId === null
+                                                ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
+                                                : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                                         }`}
                                     >
                                         ទាំងអស់
                                     </button>
-                                    {termGroups.map((group) => (
+
+                                    {/* Term Groups */}
+                                    {termGroups.slice(0, 2).map((group) => (
                                         <button
                                             key={group.id}
-                                            onClick={() => handleGroup(group.id)}
-                                            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                                            onClick={() => {
+                                                handleGroup(group.id);
+                                                setExpandedSector(null);
+                                            }}
+                                            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
                                                 activeGroupId === group.id
-                                                    ? 'bg-blue-600 text-white'
-                                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                                                    ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
+                                                    : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                                             }`}
                                         >
                                             {group.title_kh}
                                         </button>
                                     ))}
+
+                                    {/* Sectors with dropdown */}
+                                    {sectors.slice(0, 3).map((sector) => (
+                                        <div key={sector.id} className="relative">
+                                            <button
+                                                onClick={() => {
+                                                    if (sector.children && sector.children.length > 0) {
+                                                        setExpandedSector(expandedSector === sector.id ? null : sector.id);
+                                                    } else {
+                                                        handleSector(sector.id);
+                                                        setExpandedSector(null);
+                                                    }
+                                                }}
+                                                className={`flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+                                                    activeSectorId === sector.id || (sector.children && sector.children.some(c => c.id === activeSectorId))
+                                                        ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
+                                                        : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                                                }`}
+                                            >
+                                                {sector.title_kh}
+                                                {sector.children && sector.children.length > 0 && (
+                                                    <ChevronDown className="h-3 w-3" />
+                                                )}
+                                            </button>
+                                            {/* Dropdown for children */}
+                                            {expandedSector === sector.id && sector.children && sector.children.length > 0 && (
+                                                <div className="absolute left-0 top-full z-10 mt-1 w-48 rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                                                    <button
+                                                        onClick={() => {
+                                                            handleSector(sector.id);
+                                                            setExpandedSector(null);
+                                                        }}
+                                                        className="w-full px-3 py-1.5 text-left text-xs hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                    >
+                                                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                                                            {sector.title_kh} (All)
+                                                        </span>
+                                                    </button>
+                                                    <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
+                                                    {sector.children.map((child) => (
+                                                        <button
+                                                            key={child.id}
+                                                            onClick={() => {
+                                                                handleSector(child.id);
+                                                                setExpandedSector(null);
+                                                            }}
+                                                            className={`w-full px-3 py-1.5 text-left text-xs hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                                                                activeSectorId === child.id
+                                                                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400'
+                                                                    : 'text-gray-600 dark:text-gray-400'
+                                                            }`}
+                                                        >
+                                                            {child.title_kh}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+
+                                    {/* More button */}
+                                    {(sectors.length > 3 || termGroups.length > 2) && (
+                                        <button
+                                            className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                                        >
+                                            ផ្សេងៗ
+                                        </button>
+                                    )}
+                                </div>
+
+                                {/* Semantic search toggle */}
+                                <div className="mt-3 flex items-center gap-2">
+                                    <button
+                                        onClick={() => setSemanticSearch(!semanticSearch)}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <span
+                                            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                                                semanticSearch ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                                            }`}
+                                        >
+                                            <span
+                                                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
+                                                    semanticSearch ? 'translate-x-4' : 'translate-x-1'
+                                                }`}
+                                            />
+                                        </span>
+                                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                                            បញ្ញាត្តិហ្វាណាដម្លោះចោនហេរ
+                                        </span>
+                                    </button>
                                 </div>
                             </div>
 
@@ -374,6 +485,34 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                                                 </p>
                                                             )}
                                                         </div>
+                                                        {term.sectors.length > 0 && (
+                                                            <div className="mt-2 flex flex-wrap gap-1">
+                                                                {term.sectors.slice(0, 2).map((s) => (
+                                                                    <span
+                                                                        key={s.id}
+                                                                        className={`inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] font-medium ${
+                                                                            isSelected
+                                                                                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
+                                                                                : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                                                                        }`}
+                                                                    >
+                                                                        <span className="text-[8px]">🏷️</span>
+                                                                        {s.title_en}
+                                                                    </span>
+                                                                ))}
+                                                                {term.sectors.length > 2 && (
+                                                                    <span
+                                                                        className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${
+                                                                            isSelected
+                                                                                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
+                                                                                : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                                                                        }`}
+                                                                    >
+                                                                        +{term.sectors.length - 2}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                     {isSelected && (
                                                         <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-blue-500" />
