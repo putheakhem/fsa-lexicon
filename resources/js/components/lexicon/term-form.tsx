@@ -1,5 +1,5 @@
 import { useForm, router } from '@inertiajs/react';
-import { BookOpen, Globe2, Plus, Trash2, X } from 'lucide-react';
+import { BookOpen, Check, ChevronDown, Globe2, Plus, Trash2, X } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +15,7 @@ export interface OptionItem {
     id: number;
     title_en: string;
     title_kh: string;
+    parent_id?: number | null;
 }
 
 export interface ReferenceOption {
@@ -69,6 +70,119 @@ const STATUS_OPTIONS = [
 
 function emptyDefinition(): DefinitionRow {
     return { language: 'khmer', reference_id: null, definition: '' };
+}
+
+function MultiSelectCombobox({
+    id,
+    options,
+    value,
+    onChange,
+    placeholder,
+}: {
+    id: string;
+    options: OptionItem[];
+    value: number[];
+    onChange: (ids: number[]) => void;
+    placeholder: string;
+}) {
+    const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState('');
+
+    const toggle = (optId: number) =>
+        onChange(value.includes(optId) ? value.filter((v) => v !== optId) : [...value, optId]);
+
+    const filtered = options.filter(
+        (o) =>
+            o.title_en.toLowerCase().includes(search.toLowerCase()) ||
+            o.title_kh.toLowerCase().includes(search.toLowerCase()),
+    );
+
+    // When not searching, display hierarchy: parents first, children indented beneath them
+    const ordered: { item: OptionItem; isChild: boolean }[] = [];
+    if (search) {
+        filtered.forEach((o) => ordered.push({ item: o, isChild: false }));
+    } else {
+        const parentIds = new Set(filtered.map((o) => o.id));
+        const topLevel = filtered.filter((o) => !o.parent_id || !parentIds.has(o.parent_id!));
+        topLevel.forEach((parent) => {
+            ordered.push({ item: parent, isChild: false });
+            filtered
+                .filter((o) => o.parent_id === parent.id)
+                .forEach((child) => ordered.push({ item: child, isChild: true }));
+        });
+    }
+
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const handleContainerBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+        if (!containerRef.current?.contains(e.relatedTarget as Node)) {
+            setOpen(false);
+        }
+    };
+
+    return (
+        <div ref={containerRef} className="relative" onBlur={handleContainerBlur}>
+            <button
+                id={id}
+                type="button"
+                onClick={() => { setSearch(''); setOpen((v) => !v); }}
+                className={cn(
+                    'flex w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
+                    value.length > 0 ? 'text-foreground' : 'text-muted-foreground',
+                )}
+            >
+                {value.length > 0 ? `${value.length} selected` : placeholder}
+                <ChevronDown className="size-4 shrink-0 opacity-50" />
+            </button>
+            {open && (
+                <div className="absolute z-50 mt-1 w-full rounded-md border bg-popover shadow-md">
+                    <div className="border-b p-2">
+                        <Input
+                            placeholder="Search..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="h-8"
+                            autoFocus
+                        />
+                    </div>
+                    <div className="max-h-52 overflow-y-auto py-1">
+                        {ordered.map(({ item, isChild }) => (
+                            <button
+                                key={item.id}
+                                type="button"
+                                onClick={() => toggle(item.id)}
+                                className={cn(
+                                    'flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-muted/60',
+                                    isChild && 'pl-7',
+                                    value.includes(item.id) && 'bg-primary/5',
+                                )}
+                            >
+                                <div
+                                    className={cn(
+                                        'flex size-4 shrink-0 items-center justify-center rounded border',
+                                        value.includes(item.id)
+                                            ? 'border-primary bg-primary text-primary-foreground'
+                                            : 'border-input',
+                                    )}
+                                >
+                                    {value.includes(item.id) && <Check className="size-3" />}
+                                </div>
+                                <span className="flex-1">{item.title_en}</span>
+                                {item.title_kh && (
+                                    <span className="ml-auto shrink-0 text-xs text-muted-foreground">
+                                        {item.title_kh}
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                        {ordered.length === 0 && (
+                            <p className="px-3 py-2 text-sm text-muted-foreground">No results found.</p>
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }
 
 function ReferenceCombobox({
@@ -491,36 +605,14 @@ export default function TermForm({
                         <div className="flex flex-col gap-5 px-5 py-4">
                             {/* Sectors */}
                             <div className="flex flex-col gap-2">
-                                <Label className="flex items-center gap-1.5">
-                                    <span className="i-lucide-tag size-3.5" />
-                                    Sectors
-                                </Label>
-                                <div className="rounded-md border overflow-hidden">
-                                    <div className="max-h-40 overflow-y-auto divide-y">
-                                        {sectors.map((sector) => {
-                                            const selected = data.sector_ids.includes(sector.id);
-                                            return (
-                                                <button
-                                                    key={sector.id}
-                                                    type="button"
-                                                    onClick={() => toggleMultiSelect('sector_ids', sector.id)}
-                                                    className={cn(
-                                                        'w-full px-3 py-2 text-left text-sm transition-colors',
-                                                        selected
-                                                            ? 'bg-primary/10 text-primary font-medium'
-                                                            : 'hover:bg-muted/50',
-                                                    )}
-                                                >
-                                                    {sector.title_en}
-                                                </button>
-                                            );
-                                        })}
-                                        {sectors.length === 0 && (
-                                            <p className="px-3 py-2 text-sm text-muted-foreground">No sectors available.</p>
-                                        )}
-                                    </div>
-                                </div>
-                                <p className="text-xs text-muted-foreground">Hold Cmd/Ctrl to select multiple</p>
+                                <Label>Sectors</Label>
+                                <MultiSelectCombobox
+                                    id="sector_ids"
+                                    options={sectors}
+                                    value={data.sector_ids}
+                                    onChange={(ids) => setData('sector_ids', ids)}
+                                    placeholder="Select sectors..."
+                                />
                                 {data.sector_ids.length > 0 && (
                                     <div className="flex flex-wrap gap-1">
                                         {data.sector_ids.map((id) => {
@@ -544,35 +636,14 @@ export default function TermForm({
 
                             {/* Term Groups */}
                             <div className="flex flex-col gap-2">
-                                <Label className="flex items-center gap-1.5">
-                                    Term Groups
-                                </Label>
-                                <div className="rounded-md border overflow-hidden">
-                                    <div className="max-h-40 overflow-y-auto divide-y">
-                                        {termGroups.map((group) => {
-                                            const selected = data.term_group_ids.includes(group.id);
-                                            return (
-                                                <button
-                                                    key={group.id}
-                                                    type="button"
-                                                    onClick={() => toggleMultiSelect('term_group_ids', group.id)}
-                                                    className={cn(
-                                                        'w-full px-3 py-2 text-left text-sm transition-colors',
-                                                        selected
-                                                            ? 'bg-primary/10 text-primary font-medium'
-                                                            : 'hover:bg-muted/50',
-                                                    )}
-                                                >
-                                                    {group.title_en}
-                                                </button>
-                                            );
-                                        })}
-                                        {termGroups.length === 0 && (
-                                            <p className="px-3 py-2 text-sm text-muted-foreground">No groups available.</p>
-                                        )}
-                                    </div>
-                                </div>
-                                <p className="text-xs text-muted-foreground">Hold Cmd/Ctrl to select multiple</p>
+                                <Label>Term Groups</Label>
+                                <MultiSelectCombobox
+                                    id="term_group_ids"
+                                    options={termGroups}
+                                    value={data.term_group_ids}
+                                    onChange={(ids) => setData('term_group_ids', ids)}
+                                    placeholder="Select term groups..."
+                                />
                                 {data.term_group_ids.length > 0 && (
                                     <div className="flex flex-wrap gap-1">
                                         {data.term_group_ids.map((id) => {

@@ -20,6 +20,7 @@ final class ExcelImportCommand extends Command
      *  - fresh  : TRUNCATE table then insert (original behavior)
      *  - append : keep existing data, insert new rows only
      *  - upsert : update or insert based on `id` column from Excel
+     *  - ignore : insert new rows, skip any that violate unique constraints
      *
      * folder:
      *  - subfolder under storage/app/import
@@ -129,8 +130,8 @@ final class ExcelImportCommand extends Command
     {
         $mode = (string) $this->option('mode'); // fresh | append | upsert
 
-        if (! in_array($mode, ['fresh', 'append', 'upsert'], true)) {
-            $this->error("Invalid mode '{$mode}'. Allowed: fresh, append, upsert");
+        if (! in_array($mode, ['fresh', 'append', 'upsert', 'ignore'], true)) {
+            $this->error("Invalid mode '{$mode}'. Allowed: fresh, append, upsert, ignore");
 
             return;
         }
@@ -206,6 +207,8 @@ final class ExcelImportCommand extends Command
             $this->insertDataInChunks($filename, $data);
         } elseif ($mode === 'append') {
             $this->insertDataInChunks($filename, $data);
+        } elseif ($mode === 'ignore') {
+            $this->insertOrIgnoreInChunks($filename, $data);
         } else { // upsert
             $this->upsertData($filename, $data, 'id');
         }
@@ -255,6 +258,38 @@ final class ExcelImportCommand extends Command
             $bar->finish();
             $this->newLine();
             $this->info("Successfully imported {$table}.");
+        } catch (Exception $e) {
+            $this->error("Error inserting data into {$table}: {$e->getMessage()}");
+        }
+    }
+
+    /**
+     * Insert data in chunks, skipping rows that violate unique constraints.
+     *
+     * @param  array<int, array<string, mixed>>  $data
+     */
+    private function insertOrIgnoreInChunks(string $table, array $data, int $chunkSize = 500): void
+    {
+        try {
+            if ($chunkSize < 1) {
+                throw new InvalidArgumentException('Chunk size must be greater than 0');
+            }
+
+            $chunks = array_chunk($data, $chunkSize);
+            $totalChunks = count($chunks);
+            $this->info("Inserting (ignore duplicates) in {$totalChunks} chunks into {$table}...");
+
+            $bar = $this->output->createProgressBar($totalChunks);
+            $bar->start();
+
+            foreach ($chunks as $chunk) {
+                DB::table($table)->insertOrIgnore($chunk);
+                $bar->advance();
+            }
+
+            $bar->finish();
+            $this->newLine();
+            $this->info("Successfully imported {$table} (duplicates skipped).");
         } catch (Exception $e) {
             $this->error("Error inserting data into {$table}: {$e->getMessage()}");
         }

@@ -50,8 +50,8 @@ final class TermController extends Controller
     public function create(): Response
     {
         return Inertia::render('lexicon/terms/create', [
-            'sectors' => Sector::query()->orderBy('title_en')->get(['id', 'title_en', 'title_kh']),
-            'termGroups' => TermGroup::query()->orderBy('title_en')->get(['id', 'title_en', 'title_kh']),
+            'sectors' => Sector::query()->orderBy('parent_id')->orderBy('title_en')->get(['id', 'title_en', 'title_kh', 'parent_id']),
+            'termGroups' => TermGroup::query()->orderBy('parent_id')->orderBy('title_en')->get(['id', 'title_en', 'title_kh', 'parent_id']),
             'references' => Reference::query()->orderBy('title')->limit(100)->get(['id', 'title', 'code']),
         ]);
     }
@@ -104,8 +104,8 @@ final class TermController extends Controller
 
         return Inertia::render('lexicon/terms/edit', [
             'term' => $term,
-            'sectors' => Sector::query()->orderBy('title_en')->get(['id', 'title_en', 'title_kh']),
-            'termGroups' => TermGroup::query()->orderBy('title_en')->get(['id', 'title_en', 'title_kh']),
+            'sectors' => Sector::query()->orderBy('parent_id')->orderBy('title_en')->get(['id', 'title_en', 'title_kh', 'parent_id']),
+            'termGroups' => TermGroup::query()->orderBy('parent_id')->orderBy('title_en')->get(['id', 'title_en', 'title_kh', 'parent_id']),
             'references' => Reference::query()->orderBy('title')->limit(100)->get(['id', 'title', 'code']),
         ]);
     }
