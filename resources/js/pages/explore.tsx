@@ -213,54 +213,54 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
     return (
         <>
             <Head title="National Lexicon — ពាក្យគន្លឹះហិរញ្ញវត្ថុ" />
-            <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-gray-950">
+            <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-white to-slate-100 antialiased">
 
                 {/* ─── Navbar ─────────────────────────────────────────────── */}
-                <header className="sticky top-0 z-30 border-b border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                    <div className="mx-auto flex max-w-screen-xl items-center justify-between px-4 py-2.5 sm:px-6">
+                <header className="sticky top-0 z-30 border-b border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-sm">
+                    <div className="mx-auto flex max-w-screen-xl items-center justify-between px-4 py-3 sm:px-6 lg:py-3.5">
                         {/* Logo */}
-                        <div className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">
-                                <BookOpen className="h-5 w-5" />
+                        <Link href={home()} className="group flex items-center gap-2.5 transition-opacity hover:opacity-90 sm:gap-3">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[oklch(44.8%_0.119_151.328)] to-[oklch(38%_0.11_151.328)] shadow-sm ring-1 ring-[oklch(44.8%_0.119_151.328)]/20 text-white transition-transform duration-200 group-hover:scale-105 sm:h-10 sm:w-10">
+                                <BookOpen className="h-4.5 w-4.5 sm:h-5 sm:w-5" strokeWidth={2.5} />
                             </div>
                             <div className="leading-tight">
-                                <p className="text-sm font-bold text-gray-900 dark:text-white">National Lexicon</p>
-                                <p className="text-[10px] font-medium tracking-widest text-gray-400 uppercase">Public Portal</p>
+                                <p className="text-sm font-bold text-slate-900 sm:text-base">National Lexicon</p>
+                                <p className="text-[9px] font-medium tracking-widest text-slate-500 uppercase sm:text-[10px]">Public Portal</p>
                             </div>
-                        </div>
+                        </Link>
 
                         {/* Nav */}
-                        <nav className="hidden items-center gap-1 md:flex">
+                        <nav className="hidden items-center gap-1 lg:flex">
                             <Link
                                 href={home()}
-                                className="rounded-md px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                                className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)]/50"
                             >
                                 Home
                             </Link>
-                            <a href="#terms" className="rounded-md px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-gray-100">
+                            <a href="#terms" className="rounded-lg px-3 py-2 text-sm font-semibold text-[oklch(44.8%_0.119_151.328)] transition-colors hover:bg-[oklch(44.8%_0.119_151.328)]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)]/50">
                                 Explore Terms
                             </a>
-                            <a href="#sectors" className="rounded-md px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800">
+                            <a href="#sectors" className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)]/50">
                                 Sectors
                             </a>
-                            <span className="flex cursor-pointer items-center gap-1 rounded-md px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800">
+                            <button className="flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)]/50">
                                 <Globe className="h-3.5 w-3.5" />
                                 <span>KH</span>
-                            </span>
+                            </button>
                         </nav>
 
                         {/* CTA */}
                         {auth?.user ? (
                             <Link
                                 href={dashboard()}
-                                className="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+                                className="rounded-lg bg-[oklch(44.8%_0.119_151.328)] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[oklch(40%_0.12_151.328)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)] focus-visible:ring-offset-2 active:scale-95 sm:px-5"
                             >
                                 Dashboard
                             </Link>
                         ) : (
                             <Link
                                 href={login()}
-                                className="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+                                className="rounded-lg bg-[oklch(44.8%_0.119_151.328)] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[oklch(40%_0.12_151.328)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)] focus-visible:ring-offset-2 active:scale-95 sm:px-5"
                             >
                                 Admin Login
                             </Link>
@@ -269,39 +269,41 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                 </header>
 
                 {/* ─── Search Bar ─────────────────────────────────────────── */}
-                <div className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900 sm:px-6">
+                <div className="border-b border-slate-200/60 bg-white/80 px-4 py-4 backdrop-blur-xl sm:px-6 sm:py-5">
                     <div className="mx-auto max-w-screen-xl">
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                             {/* Search input */}
                             <div className="relative flex-1">
-                                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                                 <input
                                     type="text"
                                     value={search}
                                     onChange={(e) => handleSearch(e.target.value)}
                                     placeholder="ស្វែងរកពាក្យបច្ចេកទេសសំខាន់..."
-                                    className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-9 pr-10 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500"
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-10 pr-11 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-[oklch(44.8%_0.119_151.328)]/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[oklch(44.8%_0.119_151.328)]/20 sm:py-3"
                                 />
                                 {isNavigating && (
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600" />
+                                    <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
+                                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-[oklch(44.8%_0.119_151.328)]" />
                                     </div>
                                 )}
                             </div>
 
                             {/* Action buttons */}
-                            <button className="flex items-center gap-1.5 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-medium text-blue-700 hover:bg-blue-100 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-400">
-                                <MessageSquare className="h-3.5 w-3.5" />
-                                <span className="hidden sm:inline">ផ្នែកគតិយុត្ត</span>
-                            </button>
-                            <button className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
-                                <Navigation className="h-3.5 w-3.5" />
-                                <span className="hidden sm:inline">ចាក្យតាក</span>
-                            </button>
-                            <button className="flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700">
-                                <Share2 className="h-3.5 w-3.5" />
-                                <span className="hidden sm:inline">ចែករំលែក</span>
-                            </button>
+                            <div className="flex items-center gap-2">
+                                <button className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[oklch(44.8%_0.119_151.328)]/20 bg-[oklch(44.8%_0.119_151.328)]/10 px-3 py-2.5 text-xs font-semibold text-[oklch(44.8%_0.119_151.328)] transition-all hover:bg-[oklch(44.8%_0.119_151.328)]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)]/50 active:scale-95 sm:flex-none sm:px-4">
+                                    <MessageSquare className="h-3.5 w-3.5" />
+                                    <span className="sm:inline">ផ្នែកគតិយុត្ត</span>
+                                </button>
+                                <button className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-semibold text-slate-600 transition-all hover:bg-slate-50 hover:border-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 active:scale-95 sm:flex-none sm:px-4">
+                                    <Navigation className="h-3.5 w-3.5" />
+                                    <span className="sm:inline">ចាក្យតាក</span>
+                                </button>
+                                <button className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[oklch(44.8%_0.119_151.328)] bg-[oklch(44.8%_0.119_151.328)] px-3 py-2.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-[oklch(40%_0.12_151.328)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)] focus-visible:ring-offset-2 active:scale-95 sm:flex-none sm:px-4">
+                                    <Share2 className="h-3.5 w-3.5" />
+                                    <span className="sm:inline">ចែករំលែក</span>
+                                </button>
+                            </div>
                         </div>
 
                         {/* Semantic search + count */}
@@ -331,12 +333,12 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                 </div>
 
                 {/* ─── Main two-panel layout ───────────────────────────────── */}
-                <div id="terms" className="mx-auto flex w-full max-w-screen-xl flex-1 gap-0 px-4 py-5 sm:px-6">
+                <div id="terms" className="mx-auto flex w-full max-w-screen-xl flex-1 gap-4 px-4 py-5 sm:px-6 lg:gap-6 lg:py-8">
                     {/* LEFT PANEL */}
-                    <div className="mr-4 flex w-72 shrink-0 flex-col">
-                        <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                    <aside className="flex w-full max-w-xs shrink-0 flex-col lg:w-80">
+                        <div className="sticky top-24 rounded-xl border border-slate-200 bg-white shadow-sm">
                             {/* Filter section */}
-                            <div className="border-b border-gray-100 px-4 py-3 dark:border-gray-700">
+                            <div className="border-b border-slate-100 px-4 py-4">
                                 <div className="flex flex-wrap gap-2">
                                     {/* All button */}
                                     <button
@@ -347,8 +349,8 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                         }}
                                         className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
                                             activeSectorId === null && activeGroupId === null
-                                                ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
-                                                : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                                                ? 'border-[oklch(44.8%_0.119_151.328)] bg-[oklch(44.8%_0.119_151.328)] text-white shadow-sm'
+                                                : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                                         }`}
                                     >
                                         ទាំងអស់
@@ -497,13 +499,16 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
 
                             {/* Term list */}
                             {terms.length === 0 ? (
-                                <div className="flex flex-col items-center py-10 text-center">
-                                    <Search className="mb-2 h-7 w-7 text-gray-300" />
-                                    <p className="text-xs text-gray-400">រកមិនឃើញពាក្យ</p>
+                                <div className="flex flex-col items-center justify-center py-12 text-center">
+                                    <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
+                                        <Search className="h-6 w-6 text-slate-400" />
+                                    </div>
+                                    <p className="text-sm font-medium text-slate-900">រកមិនឃើញពាក្យ</p>
+                                    <p className="mt-1 text-xs text-slate-500">សូមព្យាយាមស្វែងរកម្តងទៀត</p>
                                     {(filters.search || activeGroupId) && (
                                         <button
                                             onClick={() => { setSearch(''); navigate({}); }}
-                                            className="mt-2 text-xs text-blue-500 hover:underline"
+                                            className="mt-3 text-xs font-medium text-[oklch(44.8%_0.119_151.328)] hover:underline focus-visible:outline-none focus-visible:underline"
                                         >
                                             លុបការស្វែងរក
                                         </button>
@@ -524,8 +529,8 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                                 onClick={() => handleSelectTerm(term.id)}
                                                 className={`group relative w-full rounded-lg px-4 py-3.5 text-left transition-all ${
                                                     isSelected
-                                                        ? 'bg-gradient-to-br from-blue-50 to-purple-50 shadow-sm ring-1 ring-blue-200 dark:from-blue-950/50 dark:to-purple-950/30 dark:ring-blue-800'
-                                                        : 'bg-white hover:bg-gray-50 hover:shadow-sm dark:bg-gray-800/50 dark:hover:bg-gray-800'
+                                                        ? 'bg-gradient-to-br from-[oklch(44.8%_0.119_151.328)]/5 to-[oklch(44.8%_0.119_151.328)]/10 shadow-sm ring-1 ring-[oklch(44.8%_0.119_151.328)]/30'
+                                                        : 'bg-white hover:bg-slate-50 hover:shadow-sm'
                                                 }`}
                                             >
                                                 <div className="flex items-start justify-between gap-2">
@@ -533,21 +538,21 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                                         <p
                                                             className={`mb-1.5 text-base font-bold leading-snug ${
                                                                 isSelected
-                                                                    ? 'text-blue-700 dark:text-blue-400'
-                                                                    : 'text-gray-900 dark:text-white'
+                                                                    ? 'text-[oklch(44.8%_0.119_151.328)]'
+                                                                    : 'text-slate-900'
                                                             }`}
                                                         >
                                                             {term.term_kh}
                                                         </p>
                                                         <div className="space-y-0.5">
                                                             {term.term_en && (
-                                                                <p className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                                                                <p className="flex items-center gap-1.5 text-xs text-slate-600">
                                                                     <span className="text-sm">🇬🇧</span>
                                                                     <span>{term.term_en}</span>
                                                                 </p>
                                                             )}
                                                             {term.term_fr && (
-                                                                <p className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                                                                <p className="flex items-center gap-1.5 text-xs text-slate-600">
                                                                     <span className="text-sm">🇫🇷</span>
                                                                     <span>{term.term_fr}</span>
                                                                 </p>
@@ -594,7 +599,7 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                                         )}
                                                     </div>
                                                     {isSelected && (
-                                                        <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-blue-500" />
+                                                        <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-[oklch(44.8%_0.119_151.328)]" />
                                                     )}
                                                 </div>
                                             </button>
@@ -603,14 +608,14 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </aside>
 
                     {/* RIGHT PANEL */}
-                    <div className="flex-1 min-w-0">
+                    <main className="flex-1 min-w-0">
                         {selectedTerm ? (
-                            <div 
+                            <article 
                                 key={selectedTerm.id}
-                                className="animate-in fade-in duration-300 rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900"
+                                className="animate-in fade-in duration-300 rounded-xl border border-slate-200 bg-white shadow-sm"
                             >
                                 {/* Term header */}
                                 <div className="space-y-4 px-6 py-6">
@@ -766,13 +771,14 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                 </div>
 
                 {/* ─── Footer ─────────────────────────────────────────────── */}
-                <footer className="border-t border-gray-200 bg-white py-4 text-center dark:border-gray-800 dark:bg-gray-900">
-                    <p className="text-xs text-gray-400">
-                        Non Bank Financial Service Authority · FSA FinTech Lexicon &copy; {new Date().getFullYear()}
+                <footer className="relative border-t border-slate-200/60 bg-gradient-to-b from-white to-slate-50/40 py-5 text-center sm:py-6">
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,oklch(44.8%_0.119_151.328)_0%,transparent_60%)] opacity-[0.015]"></div>
+                    <p className="relative text-xs text-slate-600 sm:text-sm">
+                        Non Bank Financial Service Authority · FSA FinTech Lexicon © {new Date().getFullYear()}
                         {!auth?.user && (
                             <>
                                 {' · '}
-                                <Link href={login()} className="text-blue-500 hover:underline">
+                                <Link href={login()} className="font-medium text-[oklch(44.8%_0.119_151.328)] transition-colors hover:text-[oklch(40%_0.12_151.328)] focus-visible:outline-none focus-visible:underline">
                                     Admin Login
                                 </Link>
                             </>
