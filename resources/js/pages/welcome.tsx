@@ -38,7 +38,7 @@ export default function Welcome({ stats }: Props) {
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="flex h-16 items-center justify-between lg:h-20">
                             <Link href="/" className="group flex items-center gap-3 transition-opacity hover:opacity-90">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[oklch(44.8%_0.119_151.328)] to-[oklch(38%_0.11_151.328)] shadow-lg shadow-[oklch(44.8%_0.119_151.328)]/30 ring-1 ring-white/20 transition-transform duration-200 group-hover:scale-105 lg:h-11 lg:w-11">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-primary to-[oklch(60%_0.15_210)] shadow-lg shadow-brand-primary/30 ring-1 ring-white/20 transition-transform duration-200 group-hover:scale-105 lg:h-11 lg:w-11">
                                     <BookOpen className="h-5 w-5 text-white lg:h-6 lg:w-6" strokeWidth={2.5} />
                                 </div>
                                 <div className="flex flex-col">
@@ -70,86 +70,92 @@ export default function Welcome({ stats }: Props) {
                 </header>
 
                 {/* Hero Section */}
-                <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-[oklch(15%_0.08_151.328)] to-slate-950 pt-16 lg:pt-20">
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,oklch(44.8%_0.119_151.328)_1px,transparent_1px),linear-gradient(to_bottom,oklch(44.8%_0.119_151.328)_1px,transparent_1px)] bg-[size:64px_64px] opacity-[0.04]"></div>
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/40 to-white"></div>
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,oklch(44.8%_0.119_151.328)_0%,transparent_60%)] opacity-15"></div>
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,oklch(79.5%_0.184_86.047)_0%,transparent_50%)] opacity-5"></div>
+                <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 pt-16 lg:pt-20">
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,oklch(55%_0.08_210)_0.5px,transparent_0.5px),linear-gradient(to_bottom,oklch(55%_0.08_210)_0.5px,transparent_0.5px)] bg-[size:48px_48px] opacity-[0.015]"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/20 to-white"></div>
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_65%_50%_at_50%_-10%,oklch(55%_0.08_210)_0%,transparent_50%)] opacity-[0.08]"></div>
                     
-                    <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8 lg:py-40">
-                        <div className="mx-auto max-w-4xl text-center">
+                    <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8 lg:py-32">
+                        <div className="mx-auto max-w-4xl">
                             
-                            {/* Badge */}
-                            <div className="mb-6 flex justify-center animate-in fade-in slide-in-from-top-4 duration-700 delay-75 sm:mb-8">
-                                <div className="inline-flex items-center gap-2 rounded-full border border-[oklch(44.8%_0.119_151.328)]/30 bg-[oklch(44.8%_0.119_151.328)]/10 px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[oklch(44.8%_0.119_151.328)] shadow-lg backdrop-blur-sm sm:px-4 sm:text-xs">
-                                    <Sparkles className="h-3 w-3 animate-pulse sm:h-3.5 sm:w-3.5" />
-                                    Authoritative Regulatory Terminology
+                            {/* Official Badge */}
+                            <div className="mb-5 flex justify-start animate-in fade-in slide-in-from-top-4 duration-700 delay-75 sm:mb-7 lg:ml-1">
+                                <div className="inline-flex items-center gap-2 rounded-md border border-slate-700/50 bg-slate-800/40 px-3 py-1.5 text-[10px] font-medium uppercase tracking-wide text-slate-300 backdrop-blur-sm sm:px-3.5 sm:text-[11px]">
+                                    <Shield className="h-3 w-3 text-slate-400 sm:h-3.5 sm:w-3.5" />
+                                    Official Government Platform
                                 </div>
                             </div>
                             
                             {/* Headline */}
-                            <h1 className="mb-4 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:mb-6 sm:text-5xl lg:text-6xl xl:text-7xl animate-in fade-in slide-in-from-bottom-6 duration-1000 fill-mode-both delay-150">
+                            <h1 className="mb-5 text-left text-3xl font-bold leading-[1.15] tracking-tight text-white sm:mb-6 sm:text-4xl lg:text-5xl xl:text-6xl animate-in fade-in slide-in-from-bottom-6 duration-1000 fill-mode-both delay-150">
                                 Cambodia's Financial Services
                                 <br />
-                                <span className="bg-gradient-to-r from-[oklch(44.8%_0.119_151.328)] via-[oklch(55%_0.15_151.328)] to-[oklch(44.8%_0.119_151.328)] bg-clip-text text-transparent">
+                                <span className="bg-gradient-to-r from-[oklch(58%_0.10_210)] to-[oklch(62%_0.11_215)] bg-clip-text text-transparent">
                                     Lexicon Database
                                 </span>
                             </h1>
                             
-                            <p className="mx-auto mb-8 max-w-2xl text-base leading-relaxed text-slate-300 sm:mb-12 sm:text-lg lg:text-xl animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both delay-300">
+                            {/* Trust Signal */}
+                            <div className="mb-4 flex items-center gap-2 text-left text-xs font-medium text-slate-400 sm:mb-5 lg:ml-0.5">
+                                <span>Powered by Financial Services Authority</span>
+                                <span className="text-slate-600">·</span>
+                                <span className="text-slate-500">Established 2026</span>
+                            </div>
+                            
+                            <p className="mb-8 max-w-2xl text-left text-base leading-[1.6] text-slate-300 sm:mb-11 sm:text-lg animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both delay-300">
                                 Comprehensive trilingual terminology for FinTech regulation — standardizing financial language across Cambodia's regulatory ecosystem
                             </p>
                             
                             {/* CTA Buttons */}
-                            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4 animate-in fade-in zoom-in-95 duration-1000 fill-mode-both delay-450">
+                            <div className="flex flex-col items-start gap-3 sm:flex-row sm:gap-3.5 animate-in fade-in zoom-in-95 duration-1000 fill-mode-both delay-450 lg:ml-0.5">
                                 <Link 
                                     href={explore()} 
-                                    className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[oklch(44.8%_0.119_151.328)] px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-[oklch(44.8%_0.119_151.328)]/40 transition-all hover:shadow-xl hover:shadow-[oklch(44.8%_0.119_151.328)]/50 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 active:scale-95 sm:w-auto sm:px-8 sm:py-4"
+                                    className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[oklch(58%_0.10_210)] px-7 py-3.5 text-[15px] font-semibold text-white shadow-md transition-all hover:bg-[oklch(55%_0.10_210)] hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(58%_0.10_210)] focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 active:scale-[0.98] sm:w-auto sm:px-8"
                                 >
                                     Browse Lexicon
-                                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                                 </Link>
                                 
-                                <button className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-[oklch(79.5%_0.184_86.047)]/40 bg-[oklch(79.5%_0.184_86.047)]/20 px-6 py-3.5 text-base font-medium text-white backdrop-blur-sm transition-all hover:border-[oklch(79.5%_0.184_86.047)]/60 hover:bg-[oklch(79.5%_0.184_86.047)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 active:scale-95 sm:w-auto sm:px-8">
+                                <button className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 bg-transparent px-7 py-3.5 text-[15px] font-medium text-slate-300 transition-all hover:border-slate-600 hover:bg-slate-800/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-700 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 active:scale-[0.98] sm:w-auto sm:px-8">
                                     <Search className="h-4 w-4" />
                                     Search Terms
                                 </button>
                             </div>
                             
                             {/* Inline Stats */}
-                            <div className="mt-12 grid grid-cols-2 gap-3 sm:mt-16 sm:grid-cols-4 sm:gap-4 lg:gap-6 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-600">
-                                <div className="group rounded-xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-sm transition-all duration-300 hover:bg-white/10 hover:border-[oklch(44.8%_0.119_151.328)]/40 hover:scale-[1.02] sm:rounded-2xl sm:p-6">
-                                    <div className="mb-1.5 text-3xl font-bold text-white sm:mb-2 sm:text-4xl">
+                            <div className="mt-14 grid grid-cols-2 gap-3.5 sm:mt-20 sm:grid-cols-4 sm:gap-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-600">
+                                <div className="col-span-2 rounded-lg border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm transition-all duration-300 hover:bg-white/[0.05] sm:col-span-1 sm:rounded-xl sm:p-6">
+                                    <div className="mb-1 text-4xl font-bold text-white sm:mb-1.5 sm:text-5xl">
                                         {stats.totalTerms.toLocaleString()}
                                     </div>
-                                    <div className="text-[10px] font-medium uppercase tracking-wider text-slate-400 sm:text-xs">
-                                        Terms
+                                    <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 sm:text-xs">
+                                        Verified Terms
                                     </div>
                                 </div>
                                 
-                                <div className="group rounded-xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-sm transition-all duration-300 hover:bg-white/10 hover:border-[oklch(44.8%_0.119_151.328)]/40 hover:scale-[1.02] sm:rounded-2xl sm:p-6">
-                                    <div className="mb-1.5 text-3xl font-bold text-white sm:mb-2 sm:text-4xl">
+                                <div className="rounded-lg border border-white/[0.08] bg-white/[0.02] p-4 backdrop-blur-sm transition-all duration-300 hover:bg-white/[0.04] sm:rounded-xl sm:p-5">
+                                    <div className="mb-1 text-2xl font-bold text-white sm:text-3xl">
                                         {stats.totalLanguages}
                                     </div>
-                                    <div className="text-[10px] font-medium uppercase tracking-wider text-slate-400 sm:text-xs">
+                                    <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400 sm:text-[11px]">
                                         Languages
                                     </div>
                                 </div>
                                 
-                                <div className="group rounded-xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-sm transition-all duration-300 hover:bg-white/10 hover:border-[oklch(44.8%_0.119_151.328)]/40 hover:scale-[1.02] sm:rounded-2xl sm:p-6">
-                                    <div className="mb-1.5 text-3xl font-bold text-white sm:mb-2 sm:text-4xl">
+                                <div className="rounded-lg border border-white/[0.08] bg-white/[0.02] p-4 backdrop-blur-sm transition-all duration-300 hover:bg-white/[0.04] sm:rounded-xl sm:p-5">
+                                    <div className="mb-1 text-2xl font-bold text-white sm:text-3xl">
                                         {stats.totalSectors}
                                     </div>
-                                    <div className="text-[10px] font-medium uppercase tracking-wider text-slate-400 sm:text-xs">
+                                    <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400 sm:text-[11px]">
                                         Sectors
                                     </div>
                                 </div>
                                 
-                                <div className="group rounded-xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-sm transition-all duration-300 hover:bg-white/10 hover:border-[oklch(44.8%_0.119_151.328)]/40 hover:scale-[1.02] sm:rounded-2xl sm:p-6">
-                                    <div className="mb-1.5 text-3xl font-bold text-white sm:mb-2 sm:text-4xl">
+                                <div className="col-span-2 rounded-lg border border-white/[0.08] bg-white/[0.02] p-4 backdrop-blur-sm transition-all duration-300 hover:bg-white/[0.04] sm:col-span-1 sm:rounded-xl sm:p-5">
+                                    <div className="mb-1 text-2xl font-bold text-white sm:text-3xl">
                                         {stats.totalReferences}
                                     </div>
-                                    <div className="text-[10px] font-medium uppercase tracking-wider text-slate-400 sm:text-xs">
+                                    <div className="text-[10px] font-medium uppercase tracking-wide text-slate-400 sm:text-[11px]">
                                         References
                                     </div>
                                 </div>
@@ -161,7 +167,7 @@ export default function Welcome({ stats }: Props) {
 
                 {/* Key Stakeholders Section */}
                 <section className="relative bg-gradient-to-b from-white via-slate-50/50 to-white py-16 overflow-hidden sm:py-20 lg:py-28">
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(44.8%_0.119_151.328)_0%,transparent_70%)] opacity-[0.02]"></div>
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,brand-primary_0%,transparent_70%)] opacity-[0.02]"></div>
                     <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         
                         {/* Section Header */}
@@ -237,13 +243,13 @@ export default function Welcome({ stats }: Props) {
                 </section>
 
                 {/* Multilingual Feature Section */}
-                <section className="relative border-y border-slate-200/60 bg-gradient-to-br from-slate-50 via-white to-[oklch(97%_0.005_151.328)] py-16 sm:py-20 lg:py-28">
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,oklch(44.8%_0.119_151.328)_0%,transparent_60%)] opacity-[0.025]"></div>
+                <section className="relative border-y border-slate-200/60 bg-gradient-to-br from-slate-50 via-white to-[oklch(97%_0.005_210)] py-16 sm:py-20 lg:py-28">
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,brand-primary_0%,transparent_60%)] opacity-[0.025]"></div>
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
                             
                             <div>
-                                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[oklch(44.8%_0.119_151.328)]/20 bg-[oklch(44.8%_0.119_151.328)]/5 px-3.5 py-1.5 text-xs font-semibold text-[oklch(35%_0.12_151.328)] sm:mb-6 sm:px-4 sm:text-sm">
+                                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[brand-primary]/20 bg-[brand-primary]/5 px-3.5 py-1.5 text-xs font-semibold text-[oklch(45%_0.13_210)] sm:mb-6 sm:px-4 sm:text-sm">
                                     <Languages className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                     Trilingual Terminology
                                 </div>
@@ -258,8 +264,8 @@ export default function Welcome({ stats }: Props) {
                                 
                                 <div className="space-y-4 sm:space-y-5">
                                     <div className="flex items-start gap-3 sm:gap-4">
-                                        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[oklch(44.8%_0.119_151.328)]/10 sm:h-10 sm:w-10">
-                                            <CheckCircle2 className="h-4.5 w-4.5 text-[oklch(44.8%_0.119_151.328)] sm:h-5 sm:w-5" />
+                                        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[brand-primary]/10 sm:h-10 sm:w-10">
+                                            <CheckCircle2 className="h-4.5 w-4.5 text-[brand-primary] sm:h-5 sm:w-5" />
                                         </div>
                                         <div>
                                             <p className="text-sm font-semibold text-slate-900 sm:text-base">Native Khmer translations</p>
@@ -268,8 +274,8 @@ export default function Welcome({ stats }: Props) {
                                     </div>
                                     
                                     <div className="flex items-start gap-3 sm:gap-4">
-                                        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[oklch(44.8%_0.119_151.328)]/10 sm:h-10 sm:w-10">
-                                            <CheckCircle2 className="h-4.5 w-4.5 text-[oklch(44.8%_0.119_151.328)] sm:h-5 sm:w-5" />
+                                        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[brand-primary]/10 sm:h-10 sm:w-10">
+                                            <CheckCircle2 className="h-4.5 w-4.5 text-[brand-primary] sm:h-5 sm:w-5" />
                                         </div>
                                         <div>
                                             <p className="text-sm font-semibold text-slate-900 sm:text-base">International standards</p>
@@ -278,8 +284,8 @@ export default function Welcome({ stats }: Props) {
                                     </div>
                                     
                                     <div className="flex items-start gap-3 sm:gap-4">
-                                        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[oklch(44.8%_0.119_151.328)]/10 sm:h-10 sm:w-10">
-                                            <CheckCircle2 className="h-4.5 w-4.5 text-[oklch(44.8%_0.119_151.328)] sm:h-5 sm:w-5" />
+                                        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[brand-primary]/10 sm:h-10 sm:w-10">
+                                            <CheckCircle2 className="h-4.5 w-4.5 text-[brand-primary] sm:h-5 sm:w-5" />
                                         </div>
                                         <div>
                                             <p className="text-sm font-semibold text-slate-900 sm:text-base">Cross-language search</p>
@@ -346,7 +352,7 @@ export default function Welcome({ stats }: Props) {
 
                 {/* Coverage Section */}
                 <section className="relative bg-gradient-to-b from-white via-slate-50/30 to-white py-16 sm:py-20 lg:py-28">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,oklch(79.5%_0.184_86.047)_0%,transparent_60%)] opacity-[0.015]"></div>
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,brand-secondary_0%,transparent_60%)] opacity-[0.015]"></div>
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         
                         <div className="mb-12 text-center sm:mb-16">
@@ -359,32 +365,32 @@ export default function Welcome({ stats }: Props) {
                         </div>
                         
                         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-                            <div className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-[oklch(44.8%_0.119_151.328)]/30 hover:shadow-md hover:scale-[1.02] sm:rounded-2xl sm:p-6 animate-in fade-in slide-in-from-bottom-4 duration-600 delay-100">
-                                <div className="mb-3.5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[oklch(44.8%_0.119_151.328)] text-white shadow-sm sm:mb-4 sm:h-12 sm:w-12">
+                            <div className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-[brand-primary]/30 hover:shadow-md hover:scale-[1.02] sm:rounded-2xl sm:p-6 animate-in fade-in slide-in-from-bottom-4 duration-600 delay-100">
+                                <div className="mb-3.5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[brand-primary] text-white shadow-sm sm:mb-4 sm:h-12 sm:w-12">
                                     <Globe2 className="h-5 w-5 sm:h-6 sm:w-6" />
                                 </div>
                                 <h3 className="mb-1.5 text-base font-bold text-slate-900 sm:mb-2 sm:text-lg">Digital Payments</h3>
                                 <p className="text-xs text-slate-600 sm:text-sm">Mobile money, e-wallets, QR payments</p>
                             </div>
                             
-                            <div className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-[oklch(44.8%_0.119_151.328)]/30 hover:shadow-md hover:scale-[1.02] sm:rounded-2xl sm:p-6 animate-in fade-in slide-in-from-bottom-4 duration-600 delay-200">
-                                <div className="mb-3.5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[oklch(44.8%_0.119_151.328)] text-white shadow-sm sm:mb-4 sm:h-12 sm:w-12">
+                            <div className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-[brand-primary]/30 hover:shadow-md hover:scale-[1.02] sm:rounded-2xl sm:p-6 animate-in fade-in slide-in-from-bottom-4 duration-600 delay-200">
+                                <div className="mb-3.5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[brand-primary] text-white shadow-sm sm:mb-4 sm:h-12 sm:w-12">
                                     <Database className="h-5 w-5 sm:h-6 sm:w-6" />
                                 </div>
                                 <h3 className="mb-1.5 text-base font-bold text-slate-900 sm:mb-2 sm:text-lg">Blockchain & Crypto</h3>
                                 <p className="text-xs text-slate-600 sm:text-sm">DLT, digital assets, smart contracts</p>
                             </div>
                             
-                            <div className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-[oklch(44.8%_0.119_151.328)]/30 hover:shadow-md hover:scale-[1.02] sm:rounded-2xl sm:p-6 animate-in fade-in slide-in-from-bottom-4 duration-600 delay-300">
-                                <div className="mb-3.5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[oklch(44.8%_0.119_151.328)] text-white shadow-sm sm:mb-4 sm:h-12 sm:w-12">
+                            <div className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-[brand-primary]/30 hover:shadow-md hover:scale-[1.02] sm:rounded-2xl sm:p-6 animate-in fade-in slide-in-from-bottom-4 duration-600 delay-300">
+                                <div className="mb-3.5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[brand-primary] text-white shadow-sm sm:mb-4 sm:h-12 sm:w-12">
                                     <Shield className="h-5 w-5 sm:h-6 sm:w-6" />
                                 </div>
                                 <h3 className="mb-1.5 text-base font-bold text-slate-900 sm:mb-2 sm:text-lg">RegTech & Compliance</h3>
                                 <p className="text-xs text-slate-600 sm:text-sm">KYC, AML, regulatory reporting</p>
                             </div>
                             
-                            <div className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-[oklch(44.8%_0.119_151.328)]/30 hover:shadow-md hover:scale-[1.02] sm:rounded-2xl sm:p-6 animate-in fade-in slide-in-from-bottom-4 duration-600 delay-400">
-                                <div className="mb-3.5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[oklch(44.8%_0.119_151.328)] text-white shadow-sm sm:mb-4 sm:h-12 sm:w-12">
+                            <div className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:border-[brand-primary]/30 hover:shadow-md hover:scale-[1.02] sm:rounded-2xl sm:p-6 animate-in fade-in slide-in-from-bottom-4 duration-600 delay-400">
+                                <div className="mb-3.5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[brand-primary] text-white shadow-sm sm:mb-4 sm:h-12 sm:w-12">
                                     <Book className="h-5 w-5 sm:h-6 sm:w-6" />
                                 </div>
                                 <h3 className="mb-1.5 text-base font-bold text-slate-900 sm:mb-2 sm:text-lg">Digital Banking</h3>
@@ -396,10 +402,10 @@ export default function Welcome({ stats }: Props) {
                 </section>
 
                 {/* CTA Section */}
-                <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-[oklch(18%_0.09_151.328)] to-slate-950 py-16 sm:py-20 lg:py-28">
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,oklch(44.8%_0.119_151.328)_1px,transparent_1px),linear-gradient(to_bottom,oklch(44.8%_0.119_151.328)_1px,transparent_1px)] bg-[size:64px_64px] opacity-[0.04]"></div>
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,oklch(44.8%_0.119_151.328)_0%,transparent_60%)] opacity-15"></div>
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,oklch(79.5%_0.184_86.047)_0%,transparent_50%)] opacity-[0.08]"></div>
+                <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-[oklch(18%_0.09_210)] to-slate-950 py-16 sm:py-20 lg:py-28">
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,brand-primary_1px,transparent_1px),linear-gradient(to_bottom,brand-primary_1px,transparent_1px)] bg-[size:64px_64px] opacity-[0.04]"></div>
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,brand-primary_0%,transparent_60%)] opacity-15"></div>
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,brand-secondary_0%,transparent_50%)] opacity-[0.08]"></div>
                     
                     <div className="relative mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
                         <h2 className="mb-4 text-3xl font-bold tracking-tight text-white sm:mb-6 sm:text-4xl lg:text-5xl">
@@ -412,7 +418,7 @@ export default function Welcome({ stats }: Props) {
                         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
                             <Link 
                                 href={explore()} 
-                                className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[oklch(44.8%_0.119_151.328)] px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-[oklch(44.8%_0.119_151.328)]/40 transition-all hover:shadow-xl hover:shadow-[oklch(44.8%_0.119_151.328)]/50 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 active:scale-95 sm:w-auto sm:px-8 sm:py-4"
+                                className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[brand-primary] px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-[brand-primary]/40 transition-all hover:shadow-xl hover:shadow-[brand-primary]/50 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 active:scale-95 sm:w-auto sm:px-8 sm:py-4"
                             >
                                 Browse Public Portal
                                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -430,12 +436,12 @@ export default function Welcome({ stats }: Props) {
                 
                 {/* About Section */}
                 <section className="relative bg-gradient-to-br from-slate-50 via-slate-50/50 to-white py-16 sm:py-20 lg:py-28">
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(44.8%_0.119_151.328)_0%,transparent_70%)] opacity-[0.02]"></div>
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,brand-primary_0%,transparent_70%)] opacity-[0.02]"></div>
                     <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
                         <div className="overflow-hidden rounded-xl border border-slate-200 bg-white p-8 shadow-sm sm:rounded-2xl sm:p-12 lg:p-16 transition-shadow duration-300 hover:shadow-md">
                             
                             <div className="mb-8 flex items-center gap-3.5 sm:mb-10 sm:gap-4">
-                                <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[oklch(44.8%_0.119_151.328)] shadow-sm sm:h-14 sm:w-14">
+                                <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[brand-primary] shadow-sm sm:h-14 sm:w-14">
                                     <Shield className="h-6 w-6 text-white sm:h-7 sm:w-7" strokeWidth={2.5} />
                                 </div>
                                 <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
@@ -457,24 +463,24 @@ export default function Welcome({ stats }: Props) {
                             
                             <div className="mt-10 grid gap-6 border-t border-slate-100 pt-10 sm:mt-12 sm:grid-cols-3 sm:gap-8 sm:pt-12">
                                 <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
-                                    <div className="mb-2.5 flex h-11 w-11 items-center justify-center rounded-xl bg-[oklch(44.8%_0.119_151.328)]/10 sm:mb-3 sm:h-12 sm:w-12">
-                                        <Shield className="h-5 w-5 text-[oklch(44.8%_0.119_151.328)] sm:h-6 sm:w-6" />
+                                    <div className="mb-2.5 flex h-11 w-11 items-center justify-center rounded-xl bg-[brand-primary]/10 sm:mb-3 sm:h-12 sm:w-12">
+                                        <Shield className="h-5 w-5 text-[brand-primary] sm:h-6 sm:w-6" />
                                     </div>
                                     <div className="text-sm font-semibold text-slate-900 sm:text-base">FSA Verified</div>
                                     <div className="text-xs text-slate-600 sm:text-sm">Regulatory authority approved</div>
                                 </div>
                                 
                                 <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
-                                    <div className="mb-2.5 flex h-11 w-11 items-center justify-center rounded-xl bg-[oklch(44.8%_0.119_151.328)]/10 sm:mb-3 sm:h-12 sm:w-12">
-                                        <Languages className="h-5 w-5 text-[oklch(44.8%_0.119_151.328)] sm:h-6 sm:w-6" />
+                                    <div className="mb-2.5 flex h-11 w-11 items-center justify-center rounded-xl bg-[brand-primary]/10 sm:mb-3 sm:h-12 sm:w-12">
+                                        <Languages className="h-5 w-5 text-[brand-primary] sm:h-6 sm:w-6" />
                                     </div>
                                     <div className="text-sm font-semibold text-slate-900 sm:text-base">Multilingual</div>
                                     <div className="text-xs text-slate-600 sm:text-sm">Khmer, English, French</div>
                                 </div>
                                 
                                 <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
-                                    <div className="mb-2.5 flex h-11 w-11 items-center justify-center rounded-xl bg-[oklch(44.8%_0.119_151.328)]/10 sm:mb-3 sm:h-12 sm:w-12">
-                                        <Database className="h-5 w-5 text-[oklch(44.8%_0.119_151.328)] sm:h-6 sm:w-6" />
+                                    <div className="mb-2.5 flex h-11 w-11 items-center justify-center rounded-xl bg-[brand-primary]/10 sm:mb-3 sm:h-12 sm:w-12">
+                                        <Database className="h-5 w-5 text-[brand-primary] sm:h-6 sm:w-6" />
                                     </div>
                                     <div className="text-sm font-semibold text-slate-900 sm:text-base">Comprehensive</div>
                                     <div className="text-xs text-slate-600 sm:text-sm">{stats.totalTerms}+ verified terms</div>
@@ -487,13 +493,13 @@ export default function Welcome({ stats }: Props) {
 
                 {/* Footer */}
                 <footer className="relative border-t border-slate-200/60 bg-gradient-to-b from-white to-slate-50/40 py-12 sm:py-16">
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,oklch(44.8%_0.119_151.328)_0%,transparent_60%)] opacity-[0.015]"></div>
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,brand-primary_0%,transparent_60%)] opacity-[0.015]"></div>
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="grid gap-10 sm:gap-12 lg:grid-cols-12">
                             
                             <div className="lg:col-span-5">
                                 <Link href="/" className="mb-5 inline-flex items-center gap-3 transition-opacity hover:opacity-80 sm:mb-6 sm:gap-3.5">
-                                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[oklch(44.8%_0.119_151.328)] to-[oklch(38%_0.11_151.328)] shadow-sm sm:h-12 sm:w-12">
+                                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[brand-primary] to-[oklch(60%_0.15_210)] shadow-sm sm:h-12 sm:w-12">
                                         <BookOpen className="h-5.5 w-5.5 text-white sm:h-6 sm:w-6" strokeWidth={2.5} />
                                     </div>
                                     <div className="flex flex-col">
@@ -518,17 +524,17 @@ export default function Welcome({ stats }: Props) {
                                     <h3 className="mb-3 text-xs font-semibold text-slate-900 sm:mb-4 sm:text-sm">Platform</h3>
                                     <ul className="space-y-2.5 text-xs sm:space-y-3 sm:text-sm">
                                         <li>
-                                            <Link href={explore()} className="text-slate-600 transition-colors hover:text-[oklch(44.8%_0.119_151.328)] focus-visible:outline-none focus-visible:text-[oklch(44.8%_0.119_151.328)]">
+                                            <Link href={explore()} className="text-slate-600 transition-colors hover:text-[brand-primary] focus-visible:outline-none focus-visible:text-[brand-primary]">
                                                 Browse Terms
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link href={explore()} className="text-slate-600 transition-colors hover:text-[oklch(44.8%_0.119_151.328)] focus-visible:outline-none focus-visible:text-[oklch(44.8%_0.119_151.328)]">
+                                            <Link href={explore()} className="text-slate-600 transition-colors hover:text-[brand-primary] focus-visible:outline-none focus-visible:text-[brand-primary]">
                                                 Search Lexicon
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link href={login()} className="text-slate-600 transition-colors hover:text-[oklch(44.8%_0.119_151.328)] focus-visible:outline-none focus-visible:text-[oklch(44.8%_0.119_151.328)]">
+                                            <Link href={login()} className="text-slate-600 transition-colors hover:text-[brand-primary] focus-visible:outline-none focus-visible:text-[brand-primary]">
                                                 Admin Portal
                                             </Link>
                                         </li>
@@ -539,17 +545,17 @@ export default function Welcome({ stats }: Props) {
                                     <h3 className="mb-3 text-xs font-semibold text-slate-900 sm:mb-4 sm:text-sm">Resources</h3>
                                     <ul className="space-y-2.5 text-xs sm:space-y-3 sm:text-sm">
                                         <li>
-                                            <a href="#" className="text-slate-600 transition-colors hover:text-[oklch(44.8%_0.119_151.328)] focus-visible:outline-none focus-visible:text-[oklch(44.8%_0.119_151.328)]">
+                                            <a href="#" className="text-slate-600 transition-colors hover:text-[brand-primary] focus-visible:outline-none focus-visible:text-[brand-primary]">
                                                 Documentation
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#" className="text-slate-600 transition-colors hover:text-[oklch(44.8%_0.119_151.328)] focus-visible:outline-none focus-visible:text-[oklch(44.8%_0.119_151.328)]">
+                                            <a href="#" className="text-slate-600 transition-colors hover:text-[brand-primary] focus-visible:outline-none focus-visible:text-[brand-primary]">
                                                 API Reference
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#" className="text-slate-600 transition-colors hover:text-[oklch(44.8%_0.119_151.328)] focus-visible:outline-none focus-visible:text-[oklch(44.8%_0.119_151.328)]">
+                                            <a href="#" className="text-slate-600 transition-colors hover:text-[brand-primary] focus-visible:outline-none focus-visible:text-[brand-primary]">
                                                 Guidelines
                                             </a>
                                         </li>
@@ -560,17 +566,17 @@ export default function Welcome({ stats }: Props) {
                                     <h3 className="mb-3 text-xs font-semibold text-slate-900 sm:mb-4 sm:text-sm">Legal</h3>
                                     <ul className="space-y-2.5 text-xs sm:space-y-3 sm:text-sm">
                                         <li>
-                                            <a href="#" className="text-slate-600 transition-colors hover:text-[oklch(44.8%_0.119_151.328)] focus-visible:outline-none focus-visible:text-[oklch(44.8%_0.119_151.328)]">
+                                            <a href="#" className="text-slate-600 transition-colors hover:text-[brand-primary] focus-visible:outline-none focus-visible:text-[brand-primary]">
                                                 Privacy Policy
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#" className="text-slate-600 transition-colors hover:text-[oklch(44.8%_0.119_151.328)] focus-visible:outline-none focus-visible:text-[oklch(44.8%_0.119_151.328)]">
+                                            <a href="#" className="text-slate-600 transition-colors hover:text-[brand-primary] focus-visible:outline-none focus-visible:text-[brand-primary]">
                                                 Terms of Use
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#" className="text-slate-600 transition-colors hover:text-[oklch(44.8%_0.119_151.328)] focus-visible:outline-none focus-visible:text-[oklch(44.8%_0.119_151.328)]">
+                                            <a href="#" className="text-slate-600 transition-colors hover:text-[brand-primary] focus-visible:outline-none focus-visible:text-[brand-primary]">
                                                 Contact
                                             </a>
                                         </li>

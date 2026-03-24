@@ -17,8 +17,8 @@
     --radius-md: calc(var(--radius) - 2px);
     --radius-sm: calc(var(--radius) - 4px);
 
-    --color-brand-primary: oklch(44.8% 0.119 151.328);
-    --color-brand-secondary: oklch(79.5% 0.184 86.047);
+    --color-brand-primary: oklch(58% 0.10 210);
+    --color-brand-secondary: oklch(75% 0.09 220);
 
     --color-background: var(--background);
     --color-foreground: var(--foreground);

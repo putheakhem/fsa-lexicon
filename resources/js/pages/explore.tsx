@@ -220,7 +220,7 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                     <div className="mx-auto flex max-w-screen-xl items-center justify-between px-4 py-3 sm:px-6 lg:py-3.5">
                         {/* Logo */}
                         <Link href={home()} className="group flex items-center gap-2.5 transition-opacity hover:opacity-90 sm:gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[oklch(44.8%_0.119_151.328)] to-[oklch(38%_0.11_151.328)] shadow-sm ring-1 ring-[oklch(44.8%_0.119_151.328)]/20 text-white transition-transform duration-200 group-hover:scale-105 sm:h-10 sm:w-10">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[brand-primary] to-[oklch(60%_0.15_210)] shadow-sm ring-1 ring-[brand-primary]/20 text-white transition-transform duration-200 group-hover:scale-105 sm:h-10 sm:w-10">
                                 <BookOpen className="h-4.5 w-4.5 sm:h-5 sm:w-5" strokeWidth={2.5} />
                             </div>
                             <div className="leading-tight">
@@ -233,17 +233,17 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                         <nav className="hidden items-center gap-1 lg:flex">
                             <Link
                                 href={home()}
-                                className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)]/50"
+                                className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[brand-primary]/50"
                             >
                                 Home
                             </Link>
-                            <a href="#terms" className="rounded-lg px-3 py-2 text-sm font-semibold text-[oklch(44.8%_0.119_151.328)] transition-colors hover:bg-[oklch(44.8%_0.119_151.328)]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)]/50">
+                            <a href="#terms" className="rounded-lg px-3 py-2 text-sm font-semibold text-[brand-primary] transition-colors hover:bg-[brand-primary]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[brand-primary]/50">
                                 Explore Terms
                             </a>
-                            <a href="#sectors" className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)]/50">
+                            <a href="#sectors" className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[brand-primary]/50">
                                 Sectors
                             </a>
-                            <button className="flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)]/50">
+                            <button className="flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[brand-primary]/50">
                                 <Globe className="h-3.5 w-3.5" />
                                 <span>KH</span>
                             </button>
@@ -253,14 +253,14 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                         {auth?.user ? (
                             <Link
                                 href={dashboard()}
-                                className="rounded-lg bg-[oklch(44.8%_0.119_151.328)] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[oklch(40%_0.12_151.328)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)] focus-visible:ring-offset-2 active:scale-95 sm:px-5"
+                                className="rounded-lg bg-[brand-primary] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[oklch(55%_0.14_210)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[brand-primary] focus-visible:ring-offset-2 active:scale-95 sm:px-5"
                             >
                                 Dashboard
                             </Link>
                         ) : (
                             <Link
                                 href={login()}
-                                className="rounded-lg bg-[oklch(44.8%_0.119_151.328)] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[oklch(40%_0.12_151.328)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)] focus-visible:ring-offset-2 active:scale-95 sm:px-5"
+                                className="rounded-lg bg-[brand-primary] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[oklch(55%_0.14_210)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[brand-primary] focus-visible:ring-offset-2 active:scale-95 sm:px-5"
                             >
                                 Admin Login
                             </Link>
@@ -280,18 +280,18 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                     value={search}
                                     onChange={(e) => handleSearch(e.target.value)}
                                     placeholder="ស្វែងរកពាក្យបច្ចេកទេសសំខាន់..."
-                                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-10 pr-11 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-[oklch(44.8%_0.119_151.328)]/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[oklch(44.8%_0.119_151.328)]/20 sm:py-3"
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-10 pr-11 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-[brand-primary]/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[brand-primary]/20 sm:py-3"
                                 />
                                 {isNavigating && (
                                     <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
-                                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-[oklch(44.8%_0.119_151.328)]" />
+                                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-[brand-primary]" />
                                     </div>
                                 )}
                             </div>
 
                             {/* Action buttons */}
                             <div className="flex items-center gap-2">
-                                <button className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[oklch(44.8%_0.119_151.328)]/20 bg-[oklch(44.8%_0.119_151.328)]/10 px-3 py-2.5 text-xs font-semibold text-[oklch(44.8%_0.119_151.328)] transition-all hover:bg-[oklch(44.8%_0.119_151.328)]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)]/50 active:scale-95 sm:flex-none sm:px-4">
+                                <button className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[brand-primary]/20 bg-[brand-primary]/10 px-3 py-2.5 text-xs font-semibold text-[brand-primary] transition-all hover:bg-[brand-primary]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[brand-primary]/50 active:scale-95 sm:flex-none sm:px-4">
                                     <MessageSquare className="h-3.5 w-3.5" />
                                     <span className="sm:inline">ផ្នែកគតិយុត្ត</span>
                                 </button>
@@ -299,7 +299,7 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                     <Navigation className="h-3.5 w-3.5" />
                                     <span className="sm:inline">ចាក្យតាក</span>
                                 </button>
-                                <button className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[oklch(44.8%_0.119_151.328)] bg-[oklch(44.8%_0.119_151.328)] px-3 py-2.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-[oklch(40%_0.12_151.328)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(44.8%_0.119_151.328)] focus-visible:ring-offset-2 active:scale-95 sm:flex-none sm:px-4">
+                                <button className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[brand-primary] bg-[brand-primary] px-3 py-2.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-[oklch(55%_0.14_210)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[brand-primary] focus-visible:ring-offset-2 active:scale-95 sm:flex-none sm:px-4">
                                     <Share2 className="h-3.5 w-3.5" />
                                     <span className="sm:inline">ចែករំលែក</span>
                                 </button>
@@ -349,7 +349,7 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                         }}
                                         className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
                                             activeSectorId === null && activeGroupId === null
-                                                ? 'border-[oklch(44.8%_0.119_151.328)] bg-[oklch(44.8%_0.119_151.328)] text-white shadow-sm'
+                                                ? 'border-[brand-primary] bg-[brand-primary] text-white shadow-sm'
                                                 : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                                         }`}
                                     >
@@ -508,7 +508,7 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                     {(filters.search || activeGroupId) && (
                                         <button
                                             onClick={() => { setSearch(''); navigate({}); }}
-                                            className="mt-3 text-xs font-medium text-[oklch(44.8%_0.119_151.328)] hover:underline focus-visible:outline-none focus-visible:underline"
+                                            className="mt-3 text-xs font-medium text-[brand-primary] hover:underline focus-visible:outline-none focus-visible:underline"
                                         >
                                             លុបការស្វែងរក
                                         </button>
@@ -529,7 +529,7 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                                 onClick={() => handleSelectTerm(term.id)}
                                                 className={`group relative w-full rounded-lg px-4 py-3.5 text-left transition-all ${
                                                     isSelected
-                                                        ? 'bg-gradient-to-br from-[oklch(44.8%_0.119_151.328)]/5 to-[oklch(44.8%_0.119_151.328)]/10 shadow-sm ring-1 ring-[oklch(44.8%_0.119_151.328)]/30'
+                                                        ? 'bg-gradient-to-br from-[brand-primary]/5 to-[brand-primary]/10 shadow-sm ring-1 ring-[brand-primary]/30'
                                                         : 'bg-white hover:bg-slate-50 hover:shadow-sm'
                                                 }`}
                                             >
@@ -538,7 +538,7 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                                         <p
                                                             className={`mb-1.5 text-base font-bold leading-snug ${
                                                                 isSelected
-                                                                    ? 'text-[oklch(44.8%_0.119_151.328)]'
+                                                                    ? 'text-[brand-primary]'
                                                                     : 'text-slate-900'
                                                             }`}
                                                         >
@@ -599,7 +599,7 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                                         )}
                                                     </div>
                                                     {isSelected && (
-                                                        <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-[oklch(44.8%_0.119_151.328)]" />
+                                                        <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-[brand-primary]" />
                                                     )}
                                                 </div>
                                             </button>
@@ -758,7 +758,7 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                         </div>
                                     </div>
                                 )}
-                            </div>
+                            </article>
                         ) : (
                             <div className="flex h-80 flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white text-center dark:border-gray-700 dark:bg-gray-900">
                                 <BookOpen className="mb-3 h-9 w-9 text-gray-300" />
@@ -767,18 +767,20 @@ export default function Welcome({ terms, selectedTerm, sectors, termGroups, tota
                                 </p>
                             </div>
                         )}
-                    </div>
+                    </main>
+
+                    {/* RIGHT PANEL END */}
                 </div>
 
-                {/* ─── Footer ─────────────────────────────────────────────── */}
-                <footer className="relative border-t border-slate-200/60 bg-gradient-to-b from-white to-slate-50/40 py-5 text-center sm:py-6">
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,oklch(44.8%_0.119_151.328)_0%,transparent_60%)] opacity-[0.015]"></div>
+            {/* ─── Footer ─────────────────────────────────────────────── */}
+            <footer className="relative border-t border-slate-200/60 bg-gradient-to-b from-white to-slate-50/40 py-5 text-center sm:py-6">
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,brand-primary_0%,transparent_60%)] opacity-[0.015]"></div>
                     <p className="relative text-xs text-slate-600 sm:text-sm">
                         Non Bank Financial Service Authority · FSA FinTech Lexicon © {new Date().getFullYear()}
                         {!auth?.user && (
                             <>
                                 {' · '}
-                                <Link href={login()} className="font-medium text-[oklch(44.8%_0.119_151.328)] transition-colors hover:text-[oklch(40%_0.12_151.328)] focus-visible:outline-none focus-visible:underline">
+                                <Link href={login()} className="font-medium text-[brand-primary] transition-colors hover:text-[oklch(55%_0.14_210)] focus-visible:outline-none focus-visible:underline">
                                     Admin Login
                                 </Link>
                             </>
